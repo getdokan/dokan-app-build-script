@@ -75,7 +75,7 @@ while [ "$1" != "" ]; do
 done
 
 # Execute with no args
-if [ "$1" == "" ]; then
+if [ "$1" == " " ]; then
   usage
   exit 1
 fi
