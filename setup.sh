@@ -4,7 +4,7 @@ if [ ! -f /usr/local/bin/config-android ]; then
     printf "\n"
     echo "Installing Dokan Android app configuration script"
     printf "\n"
-    wget -qO /usr/local/bin/config-android https://github.com/weDevsOfficial/dokan-app-build-script/blob/master/configure-android.sh
+    wget -qO /usr/local/bin/config-android https://raw.githubusercontent.com/weDevsOfficial/dokan-app-build-script/master/configure-android.sh
 
     # Executable permission
     chmod a+x /usr/local/bin/config-android
