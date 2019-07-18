@@ -15,67 +15,66 @@ STORE_PASSWORD=
 KEY_PASSWORD=
 
 function usage() {
-    echo "Android app signing and building script. All params are required"
-    echo ""
-    echo -e "  -h \t--help\n"
+  echo -e "Android app signing and building script. All params are required\n"
 
-    echo "  [--first-name=<name>]"
-    echo -e "\tCommon name of a person, e.g., Susan"
-    echo ""
+  echo "  [--first-name=<name>]"
+  echo -e "\tCommon name of a person, e.g., Susan\n"
 
-    echo "  [--last-name=<name>]"
-    echo -e "\tCommon name of a person, e.g., Jones"
-    echo ""
+  echo "  [--last-name=<name>]"
+  echo -e "\tCommon name of a person, e.g., Jones\n"
 
-    echo "  [--city=<name>]"
-    echo -e "\tCity name, e.g., Palo Alto"
-    echo ""
+  echo "  [--city=<name>]"
+  echo -e "\tCity name, e.g., Palo Alto\n"
 
-    echo "  [--state=<name>]"
-    echo -e "\tState or province name, e.g., California"
-    echo ""
+  echo "  [--state=<name>]"
+  echo -e "\tState or province name, e.g., California\n"
 
-    echo "  [--country=<key>]"
-    echo -e "\t two-letter country code, e.g., US"
-    echo ""
+  echo "  [--country=<key>]"
+  echo -e "\t Two-letter country code, e.g., US\n"
+
+  echo "  [--store-password=<key>]"
+  echo -e "\t Store password for your keys\n"
+
+  echo "  [--key-password=<key>]"
+  echo -e "\t Password for the upload key. Can be same as store-password\n"
 }
 
 while [ "$1" != "" ]; do
-    PARAM=`echo $1 | awk -F= '{print $1}'`
-    VALUE=`echo $1 | awk -F= '{print $2}'`
-    case $PARAM in
-        --first-name)
-            FN=$VALUE
-            ;;
-        --last-name)
-            LN=$VALUE
-            ;;
-        --city)
-            C=$VALUE
-            ;;
-        --state)
-            S="$VALUE"
-            ;;
-        --country)
-            C="$VALUE"
-            ;;
-        --store-password)
-            STORE_PASSWORD="$VALUE"
-            ;;
-        --key-password)
-            KEY_PASSWORD="$VALUE"
-            ;;
-        *)
-            echo "ERROR: unknown parameter \"$PARAM\""
-            usage
-            exit 1
-            ;;
-    esac
-    shift
+  PARAM=`echo $1 | awk -F= '{print $1}'`
+  VALUE=`echo $1 | awk -F= '{print $2}'`
+  case $PARAM in
+    --first-name)
+        FN=$VALUE
+        ;;
+    --last-name)
+        LN=$VALUE
+        ;;
+    --city)
+        C=$VALUE
+        ;;
+    --state)
+        S="$VALUE"
+        ;;
+    --country)
+        C="$VALUE"
+        ;;
+    --store-password)
+        STORE_PASSWORD="$VALUE"
+        ;;
+    --key-password)
+        KEY_PASSWORD="$VALUE"
+        ;;
+    *)
+    echo "ERROR: unknown parameter \"$PARAM\""
+    usage
+    exit 1
+    ;;
+  esac
+  shift
 done
 
 # Execute with no args
-if [ "$1" == " " ]; then
+if [ "$1" == "" ]; then
   usage
   exit 1
 fi

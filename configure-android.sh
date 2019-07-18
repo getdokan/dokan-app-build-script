@@ -20,89 +20,78 @@ IC_LAUNCHER=
 SPLASH_IMAGE=
 
 function usage() {
-    echo "Dokan android app configuration script. All params are required"
-    echo ""
-    echo -e "  -h \t--help\n"
+    echo -e "Dokan android app configuration script. All params are required\n"
 
     echo "  [--app-name=<name>]"
-    echo -e "\tName of the app"
-    echo ""
+    echo -e "\tName of the app\n"
 
     echo "  [--package-name=<name>]"
-    echo -e "\tUnique package name for your app e.g com.wedevs.dokan or com.dokan"
-    echo ""
+    echo -e "\tUnique package name for your app e.g com.wedevs.dokan or com.dokan\n"
 
     echo "  [--site-url=<url>]"
-    echo -e "\tWebsite url e.g. https://wedevs.com"
-    echo ""
+    echo -e "\tWebsite url e.g. https://wedevs.com\n"
 
     echo "  [--wc-key=<key>]"
-    echo -e "\tWoocommerce consumer key"
-    echo ""
+    echo -e "\tWoocommerce consumer key\n"
 
     echo "  [--wc-secret=<key>]"
-    echo -e "\tWoocommerce consumer secret"
-    echo ""
+    echo -e "\tWoocommerce consumer secret\n"
 
     echo "  [--fb-app-id=<key>]"
-    echo -e "\tFacbook App ID"
-    echo ""
+    echo -e "\tFacbook App ID\n"
 
     echo "  [--google-geo-key=<key>]"
-    echo -e "\tGoogle maps API key"
-    echo ""
+    echo -e "\tGoogle maps API key\n"
 
-    echo "  [--laucher-icon=<path>]"
-    echo -e "\tPath to  launcher icon image /path/to/laucnher.png"
-    echo ""
+    echo "  [--launcher-icon=<path>]"
+    echo -e "\tPath to  launcher icon image /path/to/laucnher.png\n"
 
     echo "  [--splash-image=<path>]"
-    echo -e "\tPath to splash image /path/to/splash.png"
-    echo ""
+    echo -e "\tPath to splash image /path/to/splash.png\n"
 }
 
 while [ "$1" != "" ]; do
-    PARAM=`echo $1 | awk -F= '{print $1}'`
-    VALUE=`echo $1 | awk -F= '{print $2}'`
-    case $PARAM in
-        --app-name)
-            APP_NAME=$VALUE
-            ;;
-        --package-name)
-            PACKAGE_NAME=$VALUE
-            ;;
-        --site-url)
-            SITE_URL=" '$VALUE',"
-            ;;
-        --wc-key)
-            WC_KEY=" '$VALUE'"
-            ;;
-        --wc-secret)
-            WC_SECRET=" '$VALUE'"
-            ;;
-        --fb-app-id)
-            FB_APP_ID=$VALUE
-            ;;
-        --google-geo-key)
-            GOOGLE_GEO_KEY=$VALUE
-            ;;
-        --launcher-icon)
-            IC_LAUNCHER=$VALUE
-            ;;
-        --splash-image)
-            SPLASH_IMAGE=$VALUE
-            ;;
-        *)
-            echo "ERROR: unknown parameter \"$PARAM\""
-            usage
-            exit 1
-            ;;
-    esac
-    shift
+  PARAM=`echo $1 | awk -F= '{print $1}'`
+  VALUE=`echo $1 | awk -F= '{print $2}'`
+  case $PARAM in
+    --app-name)
+        APP_NAME=$VALUE
+        ;;
+    --package-name)
+        PACKAGE_NAME=$VALUE
+        ;;
+    --site-url)
+        SITE_URL=" '$VALUE',"
+        ;;
+    --wc-key)
+        WC_KEY=" '$VALUE',"
+        ;;
+    --wc-secret)
+        WC_SECRET=" '$VALUE',"
+        ;;
+    --fb-app-id)
+        FB_APP_ID=$VALUE
+        ;;
+    --google-geo-key)
+        GOOGLE_GEO_KEY=$VALUE
+        ;;
+    --launcher-icon)
+        IC_LAUNCHER=$VALUE
+        ;;
+    --splash-image)
+        SPLASH_IMAGE=$VALUE
+        ;;
+    *)
+        echo "ERROR: unknown parameter \"$PARAM\""
+        usage
+        exit 1
+        ;;
+  esac
+  shift
 done
 
 # Execute with no args
-if [ "$1" == " " ]; then
+if [ "$1" == "" ]; then
   usage
   exit 1
 fi
