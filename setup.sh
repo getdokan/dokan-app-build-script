@@ -11,11 +11,13 @@ then
 
   echo -e "Done!\n"
 else
+  printf "\n"
   echo -e "Android configuration script is already installed\n"
 fi
 
 if [ ! -f /usr/local/bin/build-android ]
 then
+  printf "\n"
   echo -e "Installing Dokan Android app build script\n"
 
   wget -qO /usr/local/bin/build-android https://raw.githubusercontent.com/weDevsOfficial/dokan-app-build-script/master/build-android.sh
@@ -25,6 +27,7 @@ then
 
   echo -e "Done!\n"
 else
+  printf "\n"
   echo -e "Android build script is already installed\n"
 fi
 
