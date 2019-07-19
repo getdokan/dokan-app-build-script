@@ -28,7 +28,7 @@ In your termial create a new directory like `mkdir "My Projects"` and `cd` into 
 
 **Android:**
 
-In two steps you can generate an [Android App Bundle](https://developer.android.com/guide/app-bundle). This is the new way of uploading android apps to Google Play Store At first run `config-android`
+In two steps you can generate an [Android App Bundle](https://developer.android.com/guide/app-bundle). This is the new way of uploading android apps to Google Play Store. At first run `config-android`
 
 It will list the parameters that are needed to be supplied with the command. The list is self explanatory and all the parameters are required.
 
