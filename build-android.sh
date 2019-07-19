@@ -18,10 +18,10 @@ function usage() {
   echo -e "Android app signing and building script. All params are required\n"
 
   echo "  [--first-name=<name>]"
-  echo -e "\tCommon name of a person, e.g., Susan\n"
+  echo -e "\tFirst name of a person, e.g., John\n"
 
   echo "  [--last-name=<name>]"
-  echo -e "\tCommon name of a person, e.g., Jones\n"
+  echo -e "\tLast name of a person, e.g., Doe\n"
 
   echo "  [--city=<name>]"
   echo -e "\tCity name, e.g., Palo Alto\n"
@@ -38,6 +38,19 @@ function usage() {
   echo "  [--key-password=<key>]"
   echo -e "\t Password for the upload key. Can be same as store-password\n"
 }
+
+# Execute with no args
+if [ "$1" == "" ]; then
+  usage
+  exit 1
+fi
+
+# Validate supplied args number
+if [ "$#" -ne 7 ]; then
+  echo -e "${RED}All params were not supplied${NC}\n"
+  usage
+  exit 1
+fi
 
 while [ "$1" != "" ]; do
   PARAM=`echo $1 | awk -F= '{print $1}'`
@@ -73,19 +86,6 @@ while [ "$1" != "" ]; do
   shift
 done
 
-# Execute with no args
-if [ "$1" == "" ]; then
-  usage
-  exit 1
-fi
-
-# Validate supplied args number
-if [ "$#" -ne 7 ]; then
-  echo -e "${RED}All params were not supplied${NC}\n"
-  usage
-  exit 1
-fi
-
 CN="$FN $LN"
 
 # Generate sigining keypair
@@ -98,6 +98,10 @@ keytool -genkeypair -noprompt \
  -keyalg RSA \
  -keysize 2048 \
  -validity 10000
+
+# Replace gradle.properties with new Store Password and Key Password
+sed -i '' 's/\(MYAPP_RELEASE_STORE_PASSWORD=\)\(.*\)/\1'"$STORE_PASSWORD"'/' "$CONFIG_FILE"
+sed -i '' 's/\(MYAPP_RELEASE_KEY_PASSWORD=\)\(.*\)/\1'"$KEY_PASSWORD"'/' "$CONFIG_FILE"
 
  # Move key store to android/app dir
  mv my-release-key.keystore android/app

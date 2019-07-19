@@ -100,10 +100,10 @@ Now run `build-android` to see the list of parameters. All the parameters are re
     Password for the upload key. Can be same as store-password
 ```
 
-Then run `cd MyApp` and run the following command
+Now `cd MyApp` and run the following command
 
 ```bash
   build-android --first-name=John --last-name=Doe --city=LosAngeles --state=California --country=US --store-password=somepassword --key-password=somepassword
 ```
 
-This will perform the [code signing](https://developer.android.com/studio/publish/app-signing) of the app and generate an `app.aab` inside `MyApp/android/app/build/outputs/bundle/release/` directory. Your new app has been built and is ready to be uploaded to Google Play Store
+This will perform the [code signing](https://developer.android.com/studio/publish/app-signing) of the app and generate an `app.aab` inside `MyApp/android/app/build/outputs/bundle/release/` directory. Your new app has been built and is ready to be uploaded to Google Play Store.
