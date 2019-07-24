@@ -110,5 +110,5 @@ mv my-release-key.keystore android/app
 
 # Build the app
 cd android
-./grdlew clean
-./grdlew bundleRelease
+./gradlew clean
+./gradlew bundleRelease
