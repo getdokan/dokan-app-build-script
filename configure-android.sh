@@ -20,35 +20,49 @@ IC_LAUNCHER=
 SPLASH_IMAGE=
 
 function usage() {
-    echo -e "Dokan android app configuration script. All params are required\n"
+  printf "\n"
+  echo -e "Dokan android app configuration script. All params are required\n"
 
-    echo "  [--app-name=<name>]"
-    echo -e "\tName of the app\n"
+  echo "  [--app-name=<name>]"
+  echo -e "\tName of the app\n"
 
-    echo "  [--package-name=<name>]"
-    echo -e "\tUnique package name for your app e.g com.wedevs.dokan or com.dokan\n"
+  echo "  [--package-name=<name>]"
+  echo -e "\tUnique package name for your app e.g com.wedevs.dokan or com.dokan\n"
 
-    echo "  [--site-url=<url>]"
-    echo -e "\tWebsite url e.g. https://wedevs.com\n"
+  echo "  [--site-url=<url>]"
+  echo -e "\tWebsite url e.g. https://wedevs.com\n"
 
-    echo "  [--wc-key=<key>]"
-    echo -e "\tWoocommerce consumer key\n"
+  echo "  [--wc-key=<key>]"
+  echo -e "\tWoocommerce consumer key\n"
 
-    echo "  [--wc-secret=<key>]"
-    echo -e "\tWoocommerce consumer secret\n"
+  echo "  [--wc-secret=<key>]"
+  echo -e "\tWoocommerce consumer secret\n"
 
-    echo "  [--fb-app-id=<key>]"
-    echo -e "\tFacbook App ID\n"
+  echo "  [--fb-app-id=<key>]"
+  echo -e "\tFacbook App ID\n"
 
-    echo "  [--google-geo-key=<key>]"
-    echo -e "\tGoogle maps API key\n"
+  echo "  [--google-geo-key=<key>]"
+  echo -e "\tGoogle maps API key\n"
 
-    echo "  [--launcher-icon=<path>]"
-    echo -e "\tPath to  launcher icon image /path/to/laucnher.png\n"
+  echo "  [--launcher-icon=<path>]"
+  echo -e "\tPath to  launcher icon image /path/to/laucnher.png\n"
 
-    echo "  [--splash-image=<path>]"
-    echo -e "\tPath to splash image /path/to/splash.png\n"
+  echo "  [--splash-image=<path>]"
+  echo -e "\tPath to splash image /path/to/splash.png\n"
 }
+
+# Execute with no args
+if [ "$1" == "" ]; then
+  usage
+  exit 1
+fi
+
+# Validate supplied args number
+if [ "$#" -ne 9 ]; then
+  echo -e "${RED}All params were not supplied${NC}\n"
+  usage
+  exit 1
+fi
 
 while [ "$1" != "" ]; do
   PARAM=`echo $1 | awk -F= '{print $1}'`
@@ -82,32 +96,18 @@ while [ "$1" != "" ]; do
         SPLASH_IMAGE=$VALUE
         ;;
     *)
-        echo "ERROR: unknown parameter \"$PARAM\""
-        usage
-        exit 1
-        ;;
+    echo "ERROR: unknown parameter \"$PARAM\""
+    usage
+    exit 1
+    ;;
   esac
   shift
 done
-
-# Execute with no args
-if [ "$1" == "" ]; then
-  usage
-  exit 1
-fi
-
-# Validate supplied args number
-if [ "$#" -ne 9 ]; then
-  echo -e "${RED}All params were not supplied${NC}\n"
-  usage
-  exit 1
-fi
 
 # Creat new project dir
 echo -e "${BLUE}Creating new project.....${NC}"
 git clone -b upgrade-rn59 git@bitbucket.org:wedevs/dokan-app.git "$APP_NAME"
 cd "$APP_NAME"
-git checkout -b "$APP_NAME"
 react-native-rename "$APP_NAME" -b "$PACKAGE_NAME"
 
 echo -e "${BLUE}Setting up configurations.....${NC}"
@@ -120,7 +120,7 @@ sed -i '' 's/\(consumerSecret:\)\(.*\)/\1'"$WC_SECRET,"'/' "$CONFIG_FILE"
 # Replace facebook-app-id
 xmlstarlet ed --inplace -O -u "/resources/string[@name='facebook_app_id']" -v "$FB_APP_ID" "$ANDROID_STRINGS"
 xmlstarlet ed --inplace -O -u "/resources/string[@name='fb_login_protocol_scheme']" -v "fb$FB_APP_ID" "$ANDROID_STRINGS"
-xmlstarlet ed --inplace -O -u "/manifest/application/provider[@android:authorities]/@android:authorities" -v "om.facebook.app.FacebookContentProvider$FB_APP_ID" "$ANDROID_MANIFEST"
+xmlstarlet ed --inplace -O -u "/manifest/application/provider[@android:authorities]/@android:authorities" -v "com.facebook.app.FacebookContentProvider$FB_APP_ID" "$ANDROID_MANIFEST"
 
 # Replace google-geo-key
 xmlstarlet ed --inplace -O -u "/resources/string[@name='google_api_key']" -v "$GOOGLE_GEO_KEY" "$ANDROID_STRINGS"

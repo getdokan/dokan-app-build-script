@@ -6,6 +6,7 @@ RED='\033[31m'
 NC='\033[0m'
 
 # Variables
+GRADLE_PROP='./android/gradle.properties'
 FN=
 LN=
 L=
@@ -15,6 +16,7 @@ STORE_PASSWORD=
 KEY_PASSWORD=
 
 function usage() {
+  printf "\n"
   echo -e "Android app signing and building script. All params are required\n"
 
   echo "  [--first-name=<name>]"
@@ -100,13 +102,13 @@ keytool -genkeypair -noprompt \
  -validity 10000
 
 # Replace gradle.properties with new Store Password and Key Password
-sed -i '' 's/\(MYAPP_RELEASE_STORE_PASSWORD=\)\(.*\)/\1'"$STORE_PASSWORD"'/' "$CONFIG_FILE"
-sed -i '' 's/\(MYAPP_RELEASE_KEY_PASSWORD=\)\(.*\)/\1'"$KEY_PASSWORD"'/' "$CONFIG_FILE"
+sed -i '' 's/\(MYAPP_RELEASE_STORE_PASSWORD=\)\(.*\)/\1'"$STORE_PASSWORD"'/' "$GRADLE_PROP"
+sed -i '' 's/\(MYAPP_RELEASE_KEY_PASSWORD=\)\(.*\)/\1'"$KEY_PASSWORD"'/' "$GRADLE_PROP"
 
- # Move key store to android/app dir
- mv my-release-key.keystore android/app
+# Move key store to android/app dir
+mv my-release-key.keystore android/app
 
- # Build the app
- cd android
- ./grdlew clean
- ./grdlew bundleRelease
+# Build the app
+cd android
+./grdlew clean
+./grdlew bundleRelease
