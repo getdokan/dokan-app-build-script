@@ -13,7 +13,6 @@ SITE_URL=
 WC_KEY=
 WC_SECRET=
 FB_APP_ID=
-GOOGLE_GEO_KEY=
 IC_LAUNCHER=
 SPLASH_IMAGE=
 
@@ -53,7 +52,7 @@ if [ "$1" == "" ]; then
 fi
 
 # Validate supplied args number
-if [ "$#" -ne 9 ]; then
+if [ "$#" -ne 8 ]; then
   echo -e "${RED}All params were not supplied${NC}\n"
   usage
   exit 1
