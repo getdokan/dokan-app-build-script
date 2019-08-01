@@ -38,7 +38,7 @@ then
   wget -qO /usr/local/bin/config-ios https://raw.githubusercontent.com/weDevsOfficial/dokan-app-build-script/master/configure-ios.sh
 
   # Executable permission
-  chmod a+x /usr/local/bin/config-android
+  chmod a+x /usr/local/bin/config-ios
 
   echo -e "Done!\n"
 else
