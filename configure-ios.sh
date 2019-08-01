@@ -18,42 +18,46 @@ IC_LAUNCHER=
 SPLASH_IMAGE=
 
 function usage() {
-    echo "Dokan iOS app configuration script. All params are required"
-    echo ""
-    echo -e "  -h \t--help\n"
+    printf "\n"
+    echo -e "Dokan android app configuration script. All params are required\n"
 
     echo "  [--app-name=<name>]"
-    echo -e "\tName of the app"
-    echo ""
+    echo -e "\tName of the app\n"
 
     echo "  [--package-name=<name>]"
-    echo -e "\tUnique package name for your app e.g com.wedevs.dokan or com.dokan"
-    echo ""
+    echo -e "\tUnique package name for your app e.g com.wedevs.dokan or com.dokan\n"
 
     echo "  [--site-url=<url>]"
-    echo -e "\tWebsite url e.g. https://wedevs.com"
-    echo ""
+    echo -e "\tWebsite url e.g. https://wedevs.com\n"
 
     echo "  [--wc-key=<key>]"
-    echo -e "\tWoocommerce consumer key"
-    echo ""
+    echo -e "\tWoocommerce consumer key\n"
 
     echo "  [--wc-secret=<key>]"
-    echo -e "\tWoocommerce consumer secret"
-    echo ""
+    echo -e "\tWoocommerce consumer secret\n"
 
     echo "  [--fb-app-id=<key>]"
-    echo -e "\tFacbook App ID"
-    echo ""
+    echo -e "\tFacbook App ID\n"
 
-    echo "  [--laucher-icon=<path>]"
-    echo -e "\tPath to  launcher icon image /path/to/laucnher.png"
-    echo ""
+    echo "  [--launcher-icon=<path>]"
+    echo -e "\tPath to  launcher icon image /path/to/laucnher.png\n"
 
     echo "  [--splash-image=<path>]"
-    echo -e "\tPath to splash image /path/to/splash.png"
-    echo ""
+    echo -e "\tPath to splash image /path/to/splash.png\n"
 }
+
+# Execute with no args
+if [ "$1" == "" ]; then
+  usage
+  exit 1
+fi
+
+# Validate supplied args number
+if [ "$#" -ne 9 ]; then
+  echo -e "${RED}All params were not supplied${NC}\n"
+  usage
+  exit 1
+fi
 
 while [ "$1" != "" ]; do
     PARAM=`echo $1 | awk -F= '{print $1}'`
@@ -84,26 +88,14 @@ while [ "$1" != "" ]; do
             SPLASH_IMAGE=$VALUE
             ;;
         *)
-            echo "ERROR: unknown parameter \"$PARAM\""
-            usage
-            exit 1
-            ;;
+        echo "ERROR: unknown parameter \"$PARAM\""
+        usage
+        exit 1
+        ;;
     esac
     shift
 done
 
-# Execute with no args
-if [ "$1" == " " ]; then
-  usage
-  exit 1
-fi
-
-# Validate supplied args number
-if [ "$#" -ne 9 ]; then
-  echo -e "${RED}All params were not supplied${NC}\n"
-  usage
-  exit 1
-fi
 
 # Creat new project dir
 echo -e "${BLUE}Creating new project.....${NC}"
@@ -113,9 +105,33 @@ cd "$APP_NAME/ios"
 find . -name 'Dokan*' -print0 | xargs -0 rename --subst-all 'Dokan' "$APP_NAME"
 find . -name 'Dokan*' -print0 | xargs -0 rename --subst-all 'Dokan' "$APP_NAME"
 find . -name 'com.wedevs.dokan' -print0 | xargs -0 rename --subst-all 'com.wedevs.dokan' "$PACKAGE_NAME"
-find . -name 'oldName*'
+find . -name 'dokan*'
 ack --literal --files-with-matches 'Dokan' --print0 | xargs -0 sed -i '' "s/Dokan/$APP_NAME/g"
 ack --literal 'Dokan'
+
+if [ ! -d "$APP_NAME" ]
+then
+    echo -e "${BLUE}Creating new project.....${NC}"
+    git clone -b upgrade-rn59 git@bitbucket.org:wedevs/dokan-app.git "$APP_NAME"
+    cd "$APP_NAME/ios"
+    react-native-rename "$APP_NAME" -b "$PACKAGE_NAME"
+    find . -name 'Dokan*' -print0 | xargs -0 rename --subst-all 'Dokan' "$APP_NAME"
+    find . -name 'Dokan*' -print0 | xargs -0 rename --subst-all 'Dokan' "$APP_NAME"
+    find . -name 'com.wedevs.dokan' -print0 | xargs -0 rename --subst-all 'com.wedevs.dokan' "$PACKAGE_NAME"
+    find . -name 'dokan*'
+    ack --literal --files-with-matches 'Dokan' --print0 | xargs -0 sed -i '' "s/Dokan/$APP_NAME/g"
+    ack --literal 'Dokan'
+else
+    echo -e "${BLUE}Existing project found\n${NC}"
+    echo -e "${BLUE}Renaming iOS projetc.....\n${NC}"
+    cd "$APP_NAME/ios"
+    find . -name 'Dokan*' -print0 | xargs -0 rename --subst-all 'Dokan' "$APP_NAME"
+    find . -name 'Dokan*' -print0 | xargs -0 rename --subst-all 'Dokan' "$APP_NAME"
+    find . -name 'com.wedevs.dokan' -print0 | xargs -0 rename --subst-all 'com.wedevs.dokan' "$PACKAGE_NAME"
+    find . -name 'dokan*'
+    ack --literal --files-with-matches 'Dokan' --print0 | xargs -0 sed -i '' "s/Dokan/$APP_NAME/g"
+    ack --literal 'Dokan'
+fi
 
 
 # echo -e "${BLUE}Setting up configurations.....${NC}"

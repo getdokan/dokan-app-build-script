@@ -105,10 +105,16 @@ while [ "$1" != "" ]; do
 done
 
 # Creat new project dir
-echo -e "${BLUE}Creating new project.....${NC}"
-git clone -b upgrade-rn59 git@bitbucket.org:wedevs/dokan-app.git "$APP_NAME"
-cd "$APP_NAME"
-react-native-rename "$APP_NAME" -b "$PACKAGE_NAME"
+if [ ! -d "$APP_NAME" ]
+then
+  echo -e "${BLUE}Creating new project.....${NC}"
+  git clone -b upgrade-rn59 git@bitbucket.org:wedevs/dokan-app.git "$APP_NAME"
+  cd "$APP_NAME"
+  react-native-rename "$APP_NAME" -b "$PACKAGE_NAME"
+else
+  echo -e "${BLUE}Existing project found\n${NC}"
+fi
+
 
 echo -e "${BLUE}Setting up configurations.....${NC}"
 #Replace woocommerce values
@@ -128,20 +134,20 @@ xmlstarlet ed --inplace -O -u "/resources/string[@name='google_api_key']" -v "$G
 echo -e "${BLUE}Generating assets.....${NC}"
 # Generate rectangular launcher icon set and move them to mipmaps
 find ./android/app/src -type f -name 'ic_launcher.*' | while read -r icon; do
-    size=`convert "$icon" -print '%wx%h^' /dev/null`
-    cp "$IC_LAUNCHER" "$icon" && convert "$icon" -resize "$size" -background none -gravity center -extent "$size" "$icon"
+  size=`convert "$icon" -print '%wx%h^' /dev/null`
+  cp "$IC_LAUNCHER" "$icon" && convert "$icon" -resize "$size" -background none -gravity center -extent "$size" "$icon"
 done
 
 # Generate round launcher icon set and move them to mipmaps
 find ./android/app/src -type f -name 'ic_launcher_round.*' | while read -r icon; do
-    size=`convert "$icon" -print '%wx%h^' /dev/null`
-    cp "$IC_LAUNCHER" "$icon" && convert "$icon" -resize "$size" -background none -gravity center -extent "$size" -vignette 0x0 "$icon"
+  size=`convert "$icon" -print '%wx%h^' /dev/null`
+  cp "$IC_LAUNCHER" "$icon" && convert "$icon" -resize "$size" -background none -gravity center -extent "$size" -vignette 0x0 "$icon"
 done
 
 # Generate splash image set and move them to drawables
 find ./android/app/src -type f -name 'launch_screen.*' | while read -r splash; do
-    size=`convert "$splash" -print '%wx%h^' /dev/null`
-    cp "$SPLASH_IMAGE" "$splash" && convert "$splash" -resize "$size" -background none -gravity center -extent "$size" "$splash"
+  size=`convert "$splash" -print '%wx%h^' /dev/null`
+  cp "$SPLASH_IMAGE" "$splash" && convert "$splash" -resize "$size" -background none -gravity center -extent "$size" "$splash"
 done
 
 
