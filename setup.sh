@@ -33,7 +33,6 @@ if [ ! -f /usr/local/bin/config-ios ]; then
   chmod a+x /usr/local/bin/config-ios
   echo -e "${GREEN}Done!${NC}"
 else
-  printf "\n"
   echo -e "${GREEN}iOS configuration script is already installed${NC}\n"
 fi
 
