@@ -1,6 +1,6 @@
 # Dokan App Build Scripts
 
-A commandline tool for building customized Dokan App for a marketplace.
+Commanline scripts for building customized Dokan App for a marketplace. **These scripts can only be run on a Linux or Mac OS machine.**
 
 Quick Links: [Dependencies](#dependencies) | [Installation](#installation) | [Usage](#usage)
 
@@ -8,9 +8,13 @@ Quick Links: [Dependencies](#dependencies) | [Installation](#installation) | [Us
 
 Before using these scripts, a development environment needs to be configured for building a React Native app in your Machine/Server. See "React Native CLI Quickstart" section in [React Native's Official Doc](https://facebook.github.io/react-native/docs/getting-started)
 
-Additionally, the following tools need to be installed in your system
+Additionally, the following UNIX tools need to be installed in your system
 
+<!-- - [ACK](https://beyondgrep.com/install/) -->
+
+- [plutil](http://manpages.ubuntu.com/manpages/precise/man1/plutil.1.html)
 - [XMLStarlet](http://xmlstar.sourceforge.net/)
+- [jq](https://stedolan.github.io/jq/download/)
 - [imagemagick](https://imagemagick.org/index.php)
 - [react-native-rename](https://github.com/junedomingo/react-native-rename)
 
@@ -20,7 +24,7 @@ Run this command in your terminal to install the build scripts.
 
 `wget -O - https://raw.githubusercontent.com/weDevsOfficial/dokan-app-build-script/master/setup.sh | bash`
 
-Test your installation by running any of `config-android` or `build-android` commands
+Test your installation by running any of `config-android`, `build-android` or `config-ios` commands
 
 ## Usage
 
@@ -32,7 +36,7 @@ In two steps you can generate an [Android App Bundle](https://developer.android.
 
 It will list the parameters that are needed to be supplied with the command. The list is self explanatory and all the parameters are required.
 
-```bash
+```console
 Dokan android app configuration script. All params are required
 
   [--app-name=<name>]
@@ -107,3 +111,5 @@ Now `cd MyApp` and run the following command
 ```
 
 This will perform the [code signing](https://developer.android.com/studio/publish/app-signing) of the app and generate an `app.aab` inside `MyApp/android/app/build/outputs/bundle/release/` directory. Your new app has been built and is ready to be uploaded to Google Play Store.
+
+<!-- siteUrl, wcKeys, fbId, geoKey, iconSet, splashSet -->
