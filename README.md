@@ -36,36 +36,7 @@ In two steps you can generate an [Android App Bundle](https://developer.android.
 
 It will list the parameters that are needed to be supplied with the command. The list is self explanatory and all the parameters are required.
 
-```console
-Dokan android app configuration script. All params are required
-
-  [--app-name=<name>]
-    Name of the app
-
-  [--package-name=<name>]
-    Unique package name your app e.g com.wedevs.dokan or com.dokan
-
-  [--site-url=<url>]
-    Website url e.g. https://wedevs.com
-
-  [--wc-key=<key>]
-    Woocommerce consumer key
-
-  [--wc-secret=<key>]
-    Woocommerce consumer secret
-
-  [--fb-app-id=<key>]
-    Facbook App ID
-
-  [--google-geo-key=<key>]
-    Google maps API key
-
-  [--laucher-icon=<path>]
-    Path to  launcher icon image /path/to/laucnher.png
-
-  [--splash-image=<path>]
-    Path to splash image /path/to/splash.png
-```
+![config-android](./config-android.png)
 
 Now run the command as follows, replacing the placeholder values with the actual ones
 
