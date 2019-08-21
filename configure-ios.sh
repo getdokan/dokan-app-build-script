@@ -53,42 +53,42 @@ function usage() {
 
 # Execute with no args
 if [[ "$1" == "" ]]; then
-  usage
-  exit 1
+    usage
+    exit 1
 fi
 
 while [ "$1" != "" ]; do
-    PARAM=`echo $1 | awk -F= '{print $1}'`
-    VALUE=`echo $1 | awk -F= '{print $2}'`
+    PARAM=$(echo $1 | awk -F= '{print $1}')
+    VALUE=$(echo $1 | awk -F= '{print $2}')
     case $PARAM in
-        --app-name)
-            APP_NAME=$VALUE
-            ;;
-        --package-name)
-            PACKAGE_NAME=$VALUE
-            ;;
-        --site-url)
-            SITE_URL=" '$VALUE',"
-            ;;
-        --wc-key)
-            WC_KEY=" '$VALUE'"
-            ;;
-        --wc-secret)
-            WC_SECRET=" '$VALUE'"
-            ;;
-        --fb-app-id)
-            FB_APP_ID=$VALUE
-            ;;
-        --launcher-icon)
-            IC_LAUNCHER=$VALUE
-            ;;
-        --splash-image)
-            SPLASH_IMAGE=$VALUE
-            ;;
-        --update)
-            UPDATE_STRING=$VALUE
-            ;;
-        *)
+    --app-name)
+        APP_NAME=$VALUE
+        ;;
+    --package-name)
+        PACKAGE_NAME=$VALUE
+        ;;
+    --site-url)
+        SITE_URL=" '$VALUE',"
+        ;;
+    --wc-key)
+        WC_KEY=" '$VALUE'"
+        ;;
+    --wc-secret)
+        WC_SECRET=" '$VALUE'"
+        ;;
+    --fb-app-id)
+        FB_APP_ID=$VALUE
+        ;;
+    --launcher-icon)
+        IC_LAUNCHER=$VALUE
+        ;;
+    --splash-image)
+        SPLASH_IMAGE=$VALUE
+        ;;
+    --update)
+        UPDATE_STRING=$VALUE
+        ;;
+    *)
         echo -e "\n${RED}ERROR: unknown parameter${NC} \"$PARAM\""
         usage
         exit 1
@@ -101,25 +101,25 @@ done
 if [[ "$APP_NAME" == "" ]]; then
     echo -e "\n${RED}ERROR: ${NC}[--app-name] is required\n"
     exit 1
-elif [[ "$PACKAGE_NAME" == "" ]]; then
+elif [[ "$PACKAGE_NAME" == "" && "$UPDATE_STRING" == "" ]]; then
     echo -e "\n${RED}ERROR: ${NC}[--package-name] is required\n"
     exit 1
-elif [ "$SITE_URL" == "" ]; then
+elif [[ "$SITE_URL" == "" && "$UPDATE_STRING" == "" ]]; then
     echo -e "\n${RED}ERROR: ${NC}[--site-url] is required\n"
     exit 1
-elif [ "$WC_KEY" == "" ]; then
+elif [[ "$WC_KEY" == "" && "$UPDATE_STRING" == "" ]]; then
     echo -e "\n${RED}ERROR: ${NC}[--wc-key] is required\n"
     exit 1
-elif [ "$WC_SECRET" == "" ]; then
+elif [[ "$WC_SECRET" == "" && "$UPDATE_STRING" == "" ]]; then
     echo -e "\n${RED}ERROR: ${NC}[--wc-secret] is required\n"
     exit 1
-elif [ "$FB_APP_ID" == "" ]; then
+elif [[ "$FB_APP_ID" == "" && "$UPDATE_STRING" == "" ]]; then
     echo -e "\n${RED}ERROR: ${NC}[--fb-app-id] is required\n"
     exit 1
-elif [ "$IC_LAUNCHER" == "" ]; then
+elif [[ "$IC_LAUNCHER" == "" && "$UPDATE_STRING" == "" ]]; then
     echo -e "\n${RED}ERROR: ${NC}[--launcher-icon] is required\n"
     exit 1
-elif [ "$SPLASH_IMAGE" == ""  ]; then
+elif [[ "$SPLASH_IMAGE" == "" && "$UPDATE_STRING" == "" ]]; then
     echo -e "\n${RED}ERROR: ${NC}[--splash-image] is required\n"
     exit 1
 fi
@@ -127,7 +127,7 @@ fi
 # UPDATE_STRING array for updating multiple values all at once
 if [[ $UPDATE_STRING == *[,]* ]]; then
     IFS=','
-    read -a updateStrArr <<< "$UPDATE_STRING"
+    read -a updateStrArr <<<"$UPDATE_STRING"
     unset IFS
 fi
 
@@ -138,7 +138,7 @@ if [[ ! -d "$APP_NAME" ]]; then
     cd "$APP_NAME"
     react-native-rename "$APP_NAME" -b "$PACKAGE_NAME"
     grep -rl 'com.wedevs.dokan' ./ios | xargs sed -i '' "s/com.wedevs.dokan/$PACKAGE_NAME/g"
-    jq '.iosRename=true' buildScript.json > "$tmp" && mv "$tmp" buildScript.json
+    jq '.iosRename=true' buildScript.json >"$tmp" && mv "$tmp" buildScript.json
 else
     echo -e "${GREEN}Existing project found${NC}\n"
     echo -e "${BLUE}==> Renaming iOS bundle...${NC}"
@@ -147,7 +147,7 @@ else
     if [[ "$iosRename" == "false" ]]; then
         grep -rl 'com.wedevs.dokan' ./ios | xargs sed -i '' "s/com.wedevs.dokan/$PACKAGE_NAME/g"
         echo -e "${GREEN}Done!${NC}"
-        jq '.iosRename=true' buildScript.json > "$tmp" && mv "$tmp" buildScript.json
+        jq '.iosRename=true' buildScript.json >"$tmp" && mv "$tmp" buildScript.json
     else
         echo -e "${GREEN}iOS project is already renamed!${NC}"
     fi
@@ -160,7 +160,7 @@ if [[ "$iosPods" == "false" ]]; then
     cd ios
     pod install
     cd ..
-    jq '.iosPods=true' buildScript.json > "$tmp" && mv "$tmp" buildScript.json
+    jq '.iosPods=true' buildScript.json >"$tmp" && mv "$tmp" buildScript.json
 else
     echo -e "${GREEN}Pods are already installed!${NC}"
 fi
@@ -187,7 +187,7 @@ if [[ "$wcKeys" == "false" ]]; then
     sed -i '' 's/\(consumerKey:\)\(.*\)/\1'"$WC_KEY,"'/' "$CONFIG_FILE"
     sed -i '' 's/\(consumerSecret:\)\(.*\)/\1'"$WC_SECRET,"'/' "$CONFIG_FILE"
     echo -e "${GREEN}Done!${NC}"
-    jq '.wcKeys=true' buildScript.json > "$tmp" && mv "$tmp" buildScript.json
+    jq '.wcKeys=true' buildScript.json >"$tmp" && mv "$tmp" buildScript.json
 elif [[ "$wcKeys" == "true" && "$UPDATE_STRING" == "wcKeys" || "${updateStrArr[@]}" =~ "wcKeys" ]]; then
     sed -i '' 's/\(consumerKey:\)\(.*\)/\1'"$WC_KEY,"'/' "$CONFIG_FILE"
     sed -i '' 's/\(consumerSecret:\)\(.*\)/\1'"$WC_SECRET,"'/' "$CONFIG_FILE"
@@ -204,7 +204,7 @@ if [ "$iosFbId" == "false" ]; then
     plutil -replace FacebookAppID -string $FB_APP_ID "ios/$APP_NAME/Info.plist"
     sed -i '' 's/\(fb[0-9]*\)/'"$FB_URL_SCHEME"'/' "ios/$APP_NAME/Info.plist"
     echo -e "${GREEN}Done!${NC}"
-    jq '.iosFbId=true' buildScript.json > "$tmp" && mv "$tmp" buildScript.json
+    jq '.iosFbId=true' buildScript.json >"$tmp" && mv "$tmp" buildScript.json
 elif [[ "$iosFbId" == "true" && "$UPDATE_STRING" == "fbId" || "${updateStrArr[@]}" =~ "fbId" ]]; then
     plutil -replace FacebookAppID -string $FB_APP_ID "ios/$APP_NAME/Info.plist"
     sed -i '' 's/\(fb[0-9]*\)/'"$FB_URL_SCHEME"'/' "ios/$APP_NAME/Info.plist"
@@ -219,15 +219,15 @@ if [[ -f "$IC_LAUNCHER" ]]; then
     iosIcon=$(jq -r '.iosIcon' buildScript.json)
     if [[ "$iosIcon" == "false" ]]; then
         find "./ios/$APP_NAME/Images.xcassets" -type f -name 'launch-icon-*' | while read -r icon; do
-            size=`convert "$icon" -print '%wx%h^' /dev/null`
+            size=$(convert "$icon" -print '%wx%h^' /dev/null)
             cp "$IC_LAUNCHER" "$icon" && convert "$icon" -resize "$size" -background none -gravity center -extent "$size" "$icon"
             echo -e "\t$icon"
         done
-        jq '.iosIcon=true' buildScript.json > "$tmp" && mv "$tmp" buildScript.json
+        jq '.iosIcon=true' buildScript.json >"$tmp" && mv "$tmp" buildScript.json
         echo -e "${GREEN}Done!${NC}"
     elif [[ "$iosIcon" == "true" && "$UPDATE_STRING" == "iconSet" || "${updateStrArr[@]}" =~ "iconSet" ]]; then
         find "./ios/$APP_NAME/Images.xcassets" -type f -name 'launch-icon-*' | while read -r icon; do
-            size=`convert "$icon" -print '%wx%h^' /dev/null`
+            size=$(convert "$icon" -print '%wx%h^' /dev/null)
             cp "$IC_LAUNCHER" "$icon" && convert "$icon" -resize "$size" -background none -gravity center -extent "$size" "$icon"
             echo -e "\t$icon"
         done
@@ -235,6 +235,8 @@ if [[ -f "$IC_LAUNCHER" ]]; then
     else
         echo -e "${GREEN}Icon set is already generated!${NC}"
     fi
+elif [[ ! -f $IC_LAUNCHER && "$UPDATE_STRING" != "" ]]; then
+    echo -e "${GREEN}Icon set is already generated!${NC}"
 else
     echo -e "${RED}Icon image not found! Set icon image path correctly and try again${NC}"
     exit 1
@@ -245,15 +247,15 @@ if [[ -f "$SPLASH_IMAGE" ]]; then
     iosSplash=$(jq -r '.iosSplash' buildScript.json)
     if [[ "$iosSplash" == "false" ]]; then
         find "./ios/$APP_NAME/Images.xcassets" -type f -name 'Default-*' | while read -r splash; do
-            size=`convert "$splash" -print '%wx%h^' /dev/null`
+            size=$(convert "$splash" -print '%wx%h^' /dev/null)
             cp "$SPLASH_IMAGE" "$splash" && convert "$splash" -resize "$size" -background none -gravity center -extent "$size" "$splash"
             echo -e "\t$splash"
         done
-        jq '.iosSplash=true' buildScript.json > "$tmp" && mv "$tmp" buildScript.json
+        jq '.iosSplash=true' buildScript.json >"$tmp" && mv "$tmp" buildScript.json
         echo -e "${GREEN}Done!${NC}"
     elif [[ "$iosSplash" == "true" && "$UPDATE_STRING" == "splashSet" || "${updateStrArr[@]}" =~ "splashSet" ]]; then
         find "./ios/$APP_NAME/Images.xcassets" -type f -name 'Default-*' | while read -r splash; do
-            size=`convert "$splash" -print '%wx%h^' /dev/null`
+            size=$(convert "$splash" -print '%wx%h^' /dev/null)
             cp "$SPLASH_IMAGE" "$splash" && convert "$splash" -resize "$size" -background none -gravity center -extent "$size" "$splash"
             echo -e "\t$splash"
         done
@@ -261,6 +263,8 @@ if [[ -f "$SPLASH_IMAGE" ]]; then
     else
         echo -e "${GREEN}Splash image set is already generated!${NC}"
     fi
+elif [[ ! -f $SPLASH_IMAGE && "$UPDATE_STRING" != "" ]]; then
+    echo -e "${GREEN}Splash image set is already generated!${NC}"
 else
     echo -e "${RED}Splash image not found! Check splash image path correctly and try again${NC}"
 fi
