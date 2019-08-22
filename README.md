@@ -1,6 +1,6 @@
 # Dokan App Build Scripts
 
-Commanline scripts for building customized Dokan App for a marketplace. **These scripts can only be run on a Linux or Mac OS machine.**
+Commandline scripts for building customized Dokan App for a marketplace. **These scripts can only be run on a Linux or Mac OS machine.**
 
 Quick Links: [Dependencies](#dependencies) | [Installation](#installation) | [Usage](#usage) | [Android](#android) | [iOS](#ios) | [Subsequent Configuration](#subsequent-configuration) | [Subsequent Build](#subsequent-build)
 
@@ -105,7 +105,7 @@ Below is the list of available update keys
 | iconSet     | Generates new icon set from the updated path                |    √    |  √  |
 | splashSet   | Generates new splash image set from the updated path        |    √    |  √  |
 
-**Note:** The `--app-name` argument is mandatory when you are trying to updte. The `wcKeys` update key can update only `--wc-key` or only `--wc-secret` or both. For example
+**Note:** The `--app-name` argument is mandatory when you are trying to update. The `wcKeys` update key can update only `--wc-key` or only `--wc-secret` or both. For example
 
 ```bash
   config-android --app-name=MyApp --wc-key=newKey --update=wcKeys
