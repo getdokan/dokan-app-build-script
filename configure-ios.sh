@@ -134,7 +134,7 @@ fi
 # Creat new project if not exists
 if [[ ! -d "$APP_NAME" ]]; then
     echo -e "${BLUE}==> Creating new project...${NC}"
-    git clone -b upgrade-rn59 git@bitbucket.org:wedevs/dokan-app.git "$APP_NAME"
+    git clone -b develop git@bitbucket.org:wedevs/dokan-app.git "$APP_NAME"
     cd "$APP_NAME"
     react-native-rename "$APP_NAME" -b "$PACKAGE_NAME"
     grep -rl 'com.wedevs.dokan' ./ios | xargs sed -i '' "s/com.wedevs.dokan/$PACKAGE_NAME/g"
@@ -211,6 +211,11 @@ elif [[ "$iosFbId" == "true" && "$UPDATE_STRING" == "fbId" || "${updateStrArr[@]
     echo -e "${GREEN}Facebook App Id is updated${NC}"
 else
     echo -e "${GREEN}Facebook App Id is already configured!${NC}"
+fi
+
+# remove space from $APP_NAME if exists
+if [[ $APP_NAME = *[[:space:]]* ]]; then
+    APP_NAME=$(echo "$APP_NAME" | sed 's/[[:space:]]//g')
 fi
 
 # Generate app icon and splash image set

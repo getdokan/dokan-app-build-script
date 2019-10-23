@@ -145,7 +145,7 @@ fi
 # Creat new project dir
 if [[ ! -d "$APP_NAME" ]]; then
   echo -e "${BLUE}==> Creating new project...${NC}"
-  git clone -b upgrade-rn59 git@bitbucket.org:wedevs/dokan-app.git "$APP_NAME"
+  git clone -b develop git@bitbucket.org:wedevs/dokan-app.git "$APP_NAME"
   cd "$APP_NAME"
   react-native-rename "$APP_NAME" -b "$PACKAGE_NAME"
 else
