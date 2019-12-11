@@ -17,6 +17,8 @@ WC_KEY=
 WC_SECRET=
 FB_APP_ID=
 GOOGLE_GEO_KEY=
+STRIPE_PK=
+ONE_SIGNAL_ID=
 IC_LAUNCHER=
 SPLASH_IMAGE=
 UPDATE_STRING=
@@ -47,6 +49,12 @@ function usage() {
   echo -e "  [--google-geo-key=<key>]${GREEN}(required)${NC}"
   echo -e "\tGoogle maps API key\n"
 
+  echo -e "  [--stripe-pk=<key>]${GREEN}(required)${NC}"
+  echo -e "\tStripe publishable key\n"
+
+  echo -e "  [--onse-signal-id=<key>]${GREEN}(required)${NC}"
+  echo -e "\tOneSignal App ID\n"
+
   echo -e "  [--launcher-icon=<path>]${GREEN}(required)${NC}"
   echo -e "\tPath to  launcher icon image /path/to/laucnher.png\n"
 
@@ -54,7 +62,7 @@ function usage() {
   echo -e "\tPath to splash image /path/to/splash.png\n"
 
   echo -e "  [--update=<update-key>]${GREEN}(optional)${NC}"
-  echo -e "\tSingle or comma separated update keys. Available keys are \"siteUrl\", \"wcKeys\", \"fbId\", \"geoKey\", \"iconSet\", \"splashSet\"\n"
+  echo -e "\tSingle or comma separated update keys. Available keys are \"siteUrl\", \"wcKeys\", \"fbId\", \"geoKey\", \"stripePk\", \"oneSingalId\", \"iconSet\", \"splashSet\"\n"
 }
 
 # Execute with no args
@@ -87,6 +95,12 @@ while [ "$1" != "" ]; do
     ;;
   --google-geo-key)
     GOOGLE_GEO_KEY=$VALUE
+    ;;
+  --stripe-pk)
+    STRIPE_PK=$VALUE
+    ;;
+  --one-signal-id)
+    ONE_SIGNAL_ID=$VALUE
     ;;
   --launcher-icon)
     IC_LAUNCHER=$VALUE
@@ -128,6 +142,12 @@ elif [[ "$FB_APP_ID" == "" && "$UPDATE_STRING" == "" ]]; then
 elif [[ "$GOOGLE_GEO_KEY" == "" && "$UPDATE_STRING" == "" ]]; then
   echo -e "\n${RED}ERROR: ${NC}[--google-geo-key] is required\n"
   exit 1
+elif [[ "$STRIPE_PK" == "" && "$UPDATE_STRING" == "" ]]; then
+    echo -e "\n${RED}ERROR: ${NC}[--stripe-pk] is required\n"
+    exit 1
+elif [[ "$ONE_SIGNAL_ID" == "" && "$UPDATE_STRING" == "" ]]; then
+    echo -e "\n${RED}ERROR: ${NC}[--one-signal-id] is required\n"
+    exit 1
 elif [[ "$IC_LAUNCHER" == "" && "$UPDATE_STRING" == "" ]]; then
   echo -e "\n${RED}ERROR: ${NC}[--launcher-icon] is required\n"
   exit 1
@@ -215,6 +235,34 @@ elif [[ "$androidGeoKey" == "true" && "$UPDATE_STRING" == "geoKey" || "${updateS
   echo -e "${GREEN}Google Map API key is updated!${NC}"
 else
   echo -e "${GREEN}Google map API key is already configured!${NC}"
+fi
+
+# Replace Stripe Publishable_key
+echo -e "${BLUE}==> Setting Stripe Publishable Key...${NC}"
+stripePk=$(jq -r '.stripePk' buildScript.json)
+if [[ "$stripePk" == "false" ]]; then
+  sed -i '' 's/\(publishableKey:\)\(.*\)/\1'"$STRIPE_PK,"'/' "$CONFIG_FILE"
+  echo -e "${GREEN}Done!${NC}"
+  jq '.stripePk=true' buildScript.json >"$tmp" && mv "$tmp" buildScript.json
+elif [[ "$stripePk" == "true" && "$UPDATE_STRING" == "stripePk" || "${updateStrArr[@]}" =~ "stripePk" ]]; then
+  sed -i '' 's/\(publishableKey:\)\(.*\)/\1'"$STRIPE_PK,"'/' "$CONFIG_FILE"
+  echo -e "${GREEN}Stripe Publishable Key is updated!${NC}"
+else
+  echo -e "${GREEN}Stripe Publishable Key is already configured!${NC}"
+fi
+
+# Replace OneSignal App ID
+echo -e "${BLUE}==> Setting OnseSignal App ID...${NC}"
+oneSingalId=$(jq -r '.oneSingalId' buildScript.json)
+if [[ "$oneSingalId" == "false" ]]; then
+  sed -i '' 's/\(appID:\)\(.*\)/\1'"$ONE_SIGNAL_ID,"'/' "$CONFIG_FILE"
+  echo -e "${GREEN}Done!${NC}"
+  jq '.oneSingalId=true' buildScript.json >"$tmp" && mv "$tmp" buildScript.json
+elif [[ "$oneSingalId" == "true" && "$UPDATE_STRING" == "oneSingalId" || "${updateStrArr[@]}" =~ "oneSingalId" ]]; then
+  sed -i '' 's/\(appID:\)\(.*\)/\1'"$ONE_SIGNAL_ID,"'/' "$CONFIG_FILE"
+  echo -e "${GREEN}OnseSignal App ID is updated!${NC}"
+else
+  echo -e "${GREEN}OnseSignal App ID is already configured!${NC}"
 fi
 
 # Generate app icon and splash image set
