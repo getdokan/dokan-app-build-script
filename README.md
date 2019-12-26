@@ -40,17 +40,17 @@ Now run the command as follows, replacing the placeholder values with the actual
 
 ```bash
   config-android \
-  	--app-name=MyApp \
-	--package-name=com.exmaple.app \
-	--site-url=https://example.com \
-	--wc-key=somekey \
-	--wc-secret=somesecret \
-	--fb-app-id=facebookappid \
-	--google-geo-key=googlemapapikey \
-	--stripe-pk=stripePublishableKey \
-	--one-signal-id=oneSignalAppID \
-	--launcher-icon=absolute/path/to/laucnher.png \
-	--splash-image=absolute/path/to/splash.png
+    --app-name=MyApp \
+    --package-name=com.exmaple.app \
+    --site-url=https://example.com \
+    --wc-key=somekey \
+    --wc-secret=somesecret \
+    --fb-app-id=facebookappid \
+    --google-geo-key=googlemapapikey \
+    --stripe-pk=stripePublishableKey \
+    --one-signal-id=oneSignalAppID \
+    --launcher-icon=absolute/path/to/laucnher.png \
+    --splash-image=absolute/path/to/splash.png
 ```
 
 If there is spacing in the app name, surround the app name with double qoutes `--app-name="My App"` like this. If you have an **assets** directory with app icon and splash image inside, you can specify the launcher icon path and splash image path like this `--launcher-icon=absoulte/path/to/assets/launcher.png` and `--splash-image=absoulte/path/to/assets/splash.png`. **Note** the `absolute/path/to` part. Incase you want to find the absolute path of your **assests** directory `cd` into **assests** and then run `pwd`. It will print the required path.
@@ -65,13 +65,13 @@ Now `cd MyApp` and run the following command. Of course replacing the placeholde
 
 ```bash
   build-android \
-	--first-name=John \
-	--last-name=Doe \
-	--city=LosAngeles \
-	--state=California \
-	--country=US \
-	--store-password=somepassword \
-	--key-password=somepassword
+    --first-name=John \
+    --last-name=Doe \
+    --city=LosAngeles \
+    --state=California \
+    --country=US \
+    --store-password=somepassword \
+    --key-password=somepassword
 ```
 
 This will perform the [code signing](https://developer.android.com/studio/publish/app-signing) of the app and generate an `app.aab` inside `MyApp/android/app/build/outputs/bundle/release/` directory. Your new app has been built and is ready to be uploaded to Google Play Store.
@@ -86,16 +86,16 @@ Run the following command as follows
 
 ```bash
   config-ios \
-  	--app-name=MyApp \
-  	--package-name=com.exmaple.app \
-  	--site-url=https://example.com \
-  	--wc-key=somekey \
-  	--wc-secret=somesecret \
-  	--fb-app-id=facebookappid \
-  	--stripe-pk=stripePublishableKey \
-	--one-signal-id=oneSignalAppID \
-  	--launcher-icon=path/to/laucnher.png \
-  	--splash-image=path/to/splash.png
+    --app-name=MyApp \
+    --package-name=com.exmaple.app \
+    --site-url=https://example.com \
+    --wc-key=somekey \
+    --wc-secret=somesecret \
+    --fb-app-id=facebookappid \
+    --stripe-pk=stripePublishableKey \
+    --one-signal-id=oneSignalAppID \
+    --launcher-icon=path/to/laucnher.png \
+    --splash-image=path/to/splash.png
 ```
 
 This will download, create and configure a new iOS project. If there is already an existing project created for Android, this command will just configure the iOS project for you without downloading and creating a new one.

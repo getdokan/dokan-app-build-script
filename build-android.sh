@@ -134,6 +134,23 @@ keytool -genkeypair -noprompt \
 sed -i '' 's/\(MYAPP_RELEASE_STORE_PASSWORD=\)\(.*\)/\1'"$STORE_PASSWORD"'/' "$GRADLE_PROP"
 sed -i '' 's/\(MYAPP_RELEASE_KEY_PASSWORD=\)\(.*\)/\1'"$KEY_PASSWORD"'/' "$GRADLE_PROP"
 
+
+# Generate Release Hash key for facbook login and write it to file
+README_FILE="readme.txt";
+PATH_TO_README=`pwd`/$file;
+
+if [[ ! -f $PATH_TO_README ]]; then
+  touch $PATH_TO_README;
+
+  HASH=$(keytool -exportcert -noprompt \
+    -alias my-key-alias \
+    -keystore my-release-key.keystore \
+    -storepass "$STORE_PASSWORD" \
+    -keypass "$KEY_PASSWORD" | openssl sha1 -binary | openssl base64)
+
+  echo "Place the following code in your facebook developer portal. For detail instruction follow Dokan App documentation \n\n${HASH}" >> $fullpath;
+fi
+
 # Move key store to android/app dir
 mv my-release-key.keystore android/app
 
@@ -141,3 +158,13 @@ mv my-release-key.keystore android/app
 cd android
 ./gradlew clean
 ./gradlew bundleRelease
+
+# Create a zip file including the newly built app and readme.txt
+mkdir download
+cp app/build/outputs/bundle/release/app.aab download/ || exit "$?"
+mv readme.txt download/
+zip -r download.zip download
+rm -rf download
+
+echo -e "${GREEN}\nAndroid app is successfully built. Downloadable is available at android/download.zip${NC}"
+

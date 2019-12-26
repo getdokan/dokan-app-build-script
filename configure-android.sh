@@ -97,10 +97,10 @@ while [ "$1" != "" ]; do
     GOOGLE_GEO_KEY=$VALUE
     ;;
   --stripe-pk)
-    STRIPE_PK=$VALUE
+    STRIPE_PK=" '$VALUE',"
     ;;
   --one-signal-id)
-    ONE_SIGNAL_ID=$VALUE
+    ONE_SIGNAL_ID=" '$VALUE',"
     ;;
   --launcher-icon)
     IC_LAUNCHER=$VALUE
@@ -143,11 +143,11 @@ elif [[ "$GOOGLE_GEO_KEY" == "" && "$UPDATE_STRING" == "" ]]; then
   echo -e "\n${RED}ERROR: ${NC}[--google-geo-key] is required\n"
   exit 1
 elif [[ "$STRIPE_PK" == "" && "$UPDATE_STRING" == "" ]]; then
-    echo -e "\n${RED}ERROR: ${NC}[--stripe-pk] is required\n"
-    exit 1
+  echo -e "\n${RED}ERROR: ${NC}[--stripe-pk] is required\n"
+  exit 1
 elif [[ "$ONE_SIGNAL_ID" == "" && "$UPDATE_STRING" == "" ]]; then
-    echo -e "\n${RED}ERROR: ${NC}[--one-signal-id] is required\n"
-    exit 1
+  echo -e "\n${RED}ERROR: ${NC}[--one-signal-id] is required\n"
+  exit 1
 elif [[ "$IC_LAUNCHER" == "" && "$UPDATE_STRING" == "" ]]; then
   echo -e "\n${RED}ERROR: ${NC}[--launcher-icon] is required\n"
   exit 1
@@ -165,7 +165,7 @@ fi
 # Creat new project dir
 if [[ ! -d "$APP_NAME" ]]; then
   echo -e "${BLUE}==> Creating new project...${NC}"
-  git clone -b develop git@bitbucket.org:wedevs/dokan-app.git "$APP_NAME"
+  git clone -b develop git@bitbucket.org:wedevs/dokan-app.git "$APP_NAME" || exit "$?"
   cd "$APP_NAME"
   react-native-rename "$APP_NAME" -b "$PACKAGE_NAME"
 else
@@ -180,6 +180,7 @@ if [[ "$siteUrl" == "false" ]]; then
   PREV_URL=$(awk -F "url:" '{print $2}' src/common/Config.js | tr -d '\n')
   sed -i '' "s|$PREV_URL|$SITE_URL|g" "$CONFIG_FILE"
   echo -e "${GREEN}Done!${NC}"
+  jq '.siteUrl=true' buildScript.json >"$tmp" && mv "$tmp" buildScript.json
 elif [[ "$siteUrl" == "true" && "$UPDATE_STRING" == "siteUrl" || "${updateStrArr[@]}" =~ "siteUrl" ]]; then
   PREV_URL=$(awk -F "url:" '{print $2}' src/common/Config.js | tr -d '\n')
   sed -i '' "s|$PREV_URL|$SITE_URL|g" "$CONFIG_FILE"

@@ -27,13 +27,27 @@ else
 fi
 
 echo -e "${BLUE}==> Installing Dokan iOS app configuration script${NC}"
-if [ ! -f /usr/local/bin/config-ios ]; then
+if [[ ! -f /usr/local/bin/config-ios ]]; then
   wget -qO /usr/local/bin/config-ios https://raw.githubusercontent.com/weDevsOfficial/dokan-app-build-script/master/configure-ios.sh
   # Executable permission
   chmod a+x /usr/local/bin/config-ios
   echo -e "${GREEN}Done!${NC}"
 else
   echo -e "${GREEN}iOS configuration script is already installed${NC}\n"
+fi
+
+# Install "update-dokan-app-scripts"
+if [[ ! -f /usr/local/bin/update-dokan-app-scripts ]]; then
+  wget -qO /usr/local/bin/update-dokan-app-scripts https://raw.githubusercontent.com/weDevsOfficial/dokan-app-build-script/master/update-build-scripts.sh
+  # Executable permission
+  chmod a+x /usr/local/bin/update-dokan-app-scripts
+fi
+
+# Install "uninstall-dokan-app-scripts"
+if [[ ! -f /usr/local/bin/uninstall-dokan-app-scripts ]]; then
+  wget -qO /usr/local/bin/uninstall-dokan-app-scripts https://raw.githubusercontent.com/weDevsOfficial/dokan-app-build-script/master/uninstall-build-scripts.sh
+  # Executable permission
+  chmod a+x /usr/local/bin/uninstall-dokan-app-scripts
 fi
 
 echo "**************************"
