@@ -163,7 +163,7 @@ cd android
 mkdir download
 cp app/build/outputs/bundle/release/app.aab download/ || exit "$?"
 mv readme.txt download/
-zip -r download.zip download
+zip -r download.zip download || exit "$?"
 rm -rf download
 
 echo -e "${GREEN}\nAndroid app is successfully built. Downloadable is available at android/download.zip${NC}"
