@@ -237,7 +237,7 @@ fi
 echo -e "${BLUE}==> Setting Stripe Publishable Key...${NC}"
 stripePk=$(jq -r '.stripePk' buildScript.json)
 if [[ "$stripePk" == "false" ]]; then
-  sed -i '' 's/\(publishableKey:\)\(.*\)/\1'"$STRIPE_PK,"'/' "$CONFIG_FILE"
+  sed -i '' 's/\(publishableKey:\)\(.*\)/\1'"$STRIPE_PK"'/' "$CONFIG_FILE"
   echo -e "${GREEN}Done!${NC}"
   jq '.stripePk=true' buildScript.json >"$tmp" && mv "$tmp" buildScript.json
 elif [[ "$stripePk" == "true" && "$UPDATE_STRING" == "stripePk" || "${updateStrArr[@]}" =~ "stripePk" ]]; then
@@ -251,7 +251,7 @@ fi
 echo -e "${BLUE}==> Setting OnseSignal App ID...${NC}"
 oneSingalId=$(jq -r '.oneSingalId' buildScript.json)
 if [[ "$oneSingalId" == "false" ]]; then
-  sed -i '' 's/\(appID:\)\(.*\)/\1'"$ONE_SIGNAL_ID,"'/' "$CONFIG_FILE"
+  sed -i '' 's/\(appID:\)\(.*\)/\1'"$ONE_SIGNAL_ID"'/' "$CONFIG_FILE"
   echo -e "${GREEN}Done!${NC}"
   jq '.oneSingalId=true' buildScript.json >"$tmp" && mv "$tmp" buildScript.json
 elif [[ "$oneSingalId" == "true" && "$UPDATE_STRING" == "oneSingalId" || "${updateStrArr[@]}" =~ "oneSingalId" ]]; then
