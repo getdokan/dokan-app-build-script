@@ -43,7 +43,7 @@ else
   echo -e "${GREEN}iOS configuration script is not installed${NC}\n"
 fi
 
-if [[ $NOT_INSTALL_STATUS == 0]]; then
+if [[ $NOT_INSTALL_STATUS == 0 ]]; then
   echo "******************************************"
   echo "* Successfully updated Dokan App Scripts! *"
   echo "*******************************************"
