@@ -163,7 +163,7 @@ cd android
 # Create a zip file including the newly built app and readme.txt
 mkdir download
 cp app/build/outputs/bundle/release/app.aab download/ || exit "$?"
-mv $PATH_TO_README download/ || exit "$"
+mv $PATH_TO_README download/ || exit "$?"
 zip -r download.zip download || exit "$?"
 rm -rf download
 
