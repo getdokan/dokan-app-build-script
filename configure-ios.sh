@@ -241,7 +241,7 @@ if [[ "$stripePk" == "false" ]]; then
   echo -e "${GREEN}Done!${NC}"
   jq '.stripePk=true' buildScript.json >"$tmp" && mv "$tmp" buildScript.json
 elif [[ "$stripePk" == "true" && "$UPDATE_STRING" == "stripePk" || "${updateStrArr[@]}" =~ "stripePk" ]]; then
-  sed -i '' 's/\(publishableKey:\)\(.*\)/\1'"$STRIPE_PK,"'/' "$CONFIG_FILE"
+  sed -i '' 's/\(publishableKey:\)\(.*\)/\1'"$STRIPE_PK"'/' "$CONFIG_FILE"
   echo -e "${GREEN}Stripe Publishable Key is updated!${NC}"
 else
   echo -e "${GREEN}Stripe Publishable Key is already configured!${NC}"
@@ -255,7 +255,7 @@ if [[ "$oneSingalId" == "false" ]]; then
   echo -e "${GREEN}Done!${NC}"
   jq '.oneSingalId=true' buildScript.json >"$tmp" && mv "$tmp" buildScript.json
 elif [[ "$oneSingalId" == "true" && "$UPDATE_STRING" == "oneSingalId" || "${updateStrArr[@]}" =~ "oneSingalId" ]]; then
-  sed -i '' 's/\(appID:\)\(.*\)/\1'"$ONE_SIGNAL_ID,"'/' "$CONFIG_FILE"
+  sed -i '' 's/\(appID:\)\(.*\)/\1'"$ONE_SIGNAL_ID"'/' "$CONFIG_FILE"
   echo -e "${GREEN}OnseSignal App ID is updated!${NC}"
 else
   echo -e "${GREEN}OnseSignal App ID is already configured!${NC}"
