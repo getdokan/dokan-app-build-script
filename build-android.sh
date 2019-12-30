@@ -138,9 +138,10 @@ sed -i '' 's/\(MYAPP_RELEASE_KEY_PASSWORD=\)\(.*\)/\1'"$KEY_PASSWORD"'/' "$GRADL
 # Generate Release Hash key for facbook login and write it to file
 README_FILE="readme.txt";
 PATH_TO_README=`pwd`/$README_FILE;
+echo $PATH_TO_README;
 
 if [[ ! -f $PATH_TO_README ]]; then
-  touch $PATH_TO_README;
+  touch "readme.txt" || exit "$?";
 
   HASH=$(keytool -exportcert -noprompt \
     -alias my-key-alias \
@@ -148,7 +149,7 @@ if [[ ! -f $PATH_TO_README ]]; then
     -storepass "$STORE_PASSWORD" \
     -keypass "$KEY_PASSWORD" | openssl sha1 -binary | openssl base64)
 
-  echo "Place the following code in your facebook developer portal. For detail instruction follow Dokan App documentation \n\n${HASH}" >> $fullpath;
+  echo -e "Place the following code in your facebook developer portal. For detail instruction follow Dokan App documentation \n\n${HASH}" >> $PATH_TO_README;
 fi
 
 # Move key store to android/app dir
@@ -162,9 +163,8 @@ cd android
 # Create a zip file including the newly built app and readme.txt
 mkdir download
 cp app/build/outputs/bundle/release/app.aab download/ || exit "$?"
-mv readme.txt download/
+mv $PATH_TO_README download/ || exit "$"
 zip -r download.zip download || exit "$?"
 rm -rf download
 
 echo -e "${GREEN}\nAndroid app is successfully built. Downloadable is available at android/download.zip${NC}"
-
