@@ -137,7 +137,7 @@ sed -i '' 's/\(MYAPP_RELEASE_KEY_PASSWORD=\)\(.*\)/\1'"$KEY_PASSWORD"'/' "$GRADL
 
 # Generate Release Hash key for facbook login and write it to file
 README_FILE="readme.txt";
-PATH_TO_README=`pwd`/$file;
+PATH_TO_README=`pwd`/$README_FILE;
 
 if [[ ! -f $PATH_TO_README ]]; then
   touch $PATH_TO_README;
