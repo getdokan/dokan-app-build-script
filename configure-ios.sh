@@ -154,7 +154,8 @@ fi
 # Creat new project if not exists
 if [[ ! -d "$APP_NAME" ]]; then
   echo -e "${BLUE}==> Creating new project...${NC}"
-  git clone -b NewUpdate git@bitbucket.org:wedevs/dokan-app.git "$APP_NAME" || exit "$?"
+  # git clone -b NewUpdate git@bitbucket.org:wedevs/dokan-app.git "$APP_NAME" || exit "$?"
+  git clone -b NewUpdate git@github.com:weDevsOfficial/dokan-app.git "$APP_NAME" || exit "$?"
   cd "$APP_NAME"
   react-native-rename "$APP_NAME" -b "$PACKAGE_NAME"
   grep -rl 'com.wedevs.dokan' ./ios | xargs sed -i '' "s/com.wedevs.dokan/$PACKAGE_NAME/g"
