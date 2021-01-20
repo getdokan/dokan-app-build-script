@@ -178,6 +178,8 @@ echo -e "${BLUE}==> Setting Site URL...${NC}"
 siteUrl=$(jq -r '.siteUrl' buildScript.json)
 if [[ "$siteUrl" == "false" ]]; then
   PREV_URL=$(awk -F "url:" '{print $2}' src/common/Config.js | tr -d '\n')
+  # echo -e "this... $PREV_URL Url....!${NC}"
+  # echo -e "$SITE_URL Url....!${NC}"
   sed -i '' "s|$PREV_URL|$SITE_URL|g" "$CONFIG_FILE"
   echo -e "${GREEN}Done!${NC}"
   jq '.siteUrl=true' buildScript.json >"$tmp" && mv "$tmp" buildScript.json
