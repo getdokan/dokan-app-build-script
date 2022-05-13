@@ -16,6 +16,7 @@ SITE_URL=
 WC_KEY=
 WC_SECRET=
 FB_APP_ID=
+FB_CLIENT_TOKEN=
 GOOGLE_GEO_KEY=
 STRIPE_PK=
 ONE_SIGNAL_ID=
@@ -45,6 +46,9 @@ function usage() {
 
   echo -e "  [--fb-app-id=<key>]${GREEN}(required)${NC}"
   echo -e "\tFacbook App ID\n"
+
+  echo -e "  [--fb-client-token=<key>]${GREEN}(required)${NC}"
+  echo -e "\tFacbook Client token\n"
 
   echo -e "  [--google-geo-key=<key>]${GREEN}(required)${NC}"
   echo -e "\tGoogle maps API key\n"
@@ -93,6 +97,9 @@ while [ "$1" != "" ]; do
   --fb-app-id)
     FB_APP_ID=$VALUE
     ;;
+  --fb-client-token)
+    FB_CLIENT_TOKEN=$VALUE
+    ;;
   --google-geo-key)
     GOOGLE_GEO_KEY=$VALUE
     ;;
@@ -138,6 +145,9 @@ elif [[ "$WC_SECRET" == "" && "$UPDATE_STRING" == "" ]]; then
   exit 1
 elif [[ "$FB_APP_ID" == "" && "$UPDATE_STRING" == "" ]]; then
   echo -e "\n${RED}ERROR: ${NC}[--fb-app-id] is required\n"
+  exit 1
+elif [[ "$FB_CLIENT_TOKEN" == "" && "$UPDATE_STRING" == "" ]]; then
+  echo -e "\n${RED}ERROR: ${NC}[--fb-client-token] is required\n"
   exit 1
 elif [[ "$GOOGLE_GEO_KEY" == "" && "$UPDATE_STRING" == "" ]]; then
   echo -e "\n${RED}ERROR: ${NC}[--google-geo-key] is required\n"
@@ -212,12 +222,14 @@ echo -e "${BLUE}==> Setting Facebook App ID...${NC}"
 androidFbId=$(jq -r '.androidFbId' buildScript.json)
 if [[ "$androidFbId" == "false" ]]; then
   xmlstarlet ed --inplace -O -u "/resources/string[@name='facebook_app_id']" -v "$FB_APP_ID" "$ANDROID_STRINGS"
+  xmlstarlet ed --inplace -O -u "/resources/string[@name='facebook_client_token']" -v "$FB_CLIENT_TOKEN" "$ANDROID_STRINGS"
   xmlstarlet ed --inplace -O -u "/resources/string[@name='fb_login_protocol_scheme']" -v "fb$FB_APP_ID" "$ANDROID_STRINGS"
   xmlstarlet ed --inplace -O -u "/manifest/application/provider[@android:authorities]/@android:authorities" -v "com.facebook.app.FacebookContentProvider$FB_APP_ID" "$ANDROID_MANIFEST"
   jq '.androidFbId=true' buildScript.json >"$tmp" && mv "$tmp" buildScript.json
   echo -e "${GREEN}Done!${NC}"
 elif [[ "$androidFbId" == "true" && "$UPDATE_STRING" == "fbId" || "${updateStrArr[@]}" =~ "fbId" ]]; then
   xmlstarlet ed --inplace -O -u "/resources/string[@name='facebook_app_id']" -v "$FB_APP_ID" "$ANDROID_STRINGS"
+  xmlstarlet ed --inplace -O -u "/resources/string[@name='facebook_client_token']" -v "$FB_CLIENT_TOKEN" "$ANDROID_STRINGS"
   xmlstarlet ed --inplace -O -u "/resources/string[@name='fb_login_protocol_scheme']" -v "fb$FB_APP_ID" "$ANDROID_STRINGS"
   xmlstarlet ed --inplace -O -u "/manifest/application/provider[@android:authorities]/@android:authorities" -v "com.facebook.app.FacebookContentProvider$FB_APP_ID" "$ANDROID_MANIFEST"
   echo -e "${GREEN}Facebook App Id is updated${NC}"

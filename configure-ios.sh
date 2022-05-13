@@ -14,6 +14,7 @@ SITE_URL=
 WC_KEY=
 WC_SECRET=
 FB_APP_ID=
+FB_CLIENT_TOKEN=
 STRIPE_PK=
 ONE_SIGNAL_ID=
 IC_LAUNCHER=
@@ -42,6 +43,9 @@ function usage() {
 
   echo -e "  [--fb-app-id=<key>]${GREEN}(required)${NC}"
   echo -e "\tFacbook App ID\n"
+
+  echo -e "  [--fb-client-token=<key>]${GREEN}(required)${NC}"
+  echo -e "\tFacbook Client token\n"
 
   echo -e "  [--stripe-pk=<key>]${GREEN}(required)${NC}"
   echo -e "\tStripe publishable key\n"
@@ -87,6 +91,9 @@ while [ "$1" != "" ]; do
   --fb-app-id)
     FB_APP_ID=$VALUE
     ;;
+  --fb-client-token)
+    FB_CLIENT_TOKEN=$VALUE
+    ;;
   --stripe-pk)
     STRIPE_PK=" '$VALUE',"
     ;;
@@ -129,6 +136,9 @@ elif [[ "$WC_SECRET" == "" && "$UPDATE_STRING" == "" ]]; then
   exit 1
 elif [[ "$FB_APP_ID" == "" && "$UPDATE_STRING" == "" ]]; then
   echo -e "\n${RED}ERROR: ${NC}[--fb-app-id] is required\n"
+  exit 1
+elif [[ "$FB_CLIENT_TOKEN" == "" && "$UPDATE_STRING" == "" ]]; then
+  echo -e "\n${RED}ERROR: ${NC}[--fb-client-token] is required\n"
   exit 1
 elif [[ "$STRIPE_PK" == "" && "$UPDATE_STRING" == "" ]]; then
   echo -e "\n${RED}ERROR: ${NC}[--stripe-pk] is required\n"
@@ -217,19 +227,21 @@ else
   echo -e "${GREEN}WooCommerce API keys are already configured!${NC}"
 fi
 
-# Replace Facebook App id and url schemes
+# Replace Facebook App id, Client Token and url schemes
 echo -e "${BLUE}==> Setting Facebook App ID...${NC}"
 iosFbId=$(jq -r '.iosFbId' buildScript.json)
 FB_URL_SCHEME="fb$FB_APP_ID"
 if [ "$iosFbId" == "false" ]; then
   plutil -replace FacebookAppID -string $FB_APP_ID "ios/$APP_NAME/Info.plist"
+  plutil -replace FacebookClientToken -string $FB_CLIENT_TOKEN "ios/$APP_NAME/Info.plist"
   sed -i '' 's/\(fb[0-9]*\)/'"$FB_URL_SCHEME"'/' "ios/$APP_NAME/Info.plist"
   echo -e "${GREEN}Done!${NC}"
   jq '.iosFbId=true' buildScript.json >"$tmp" && mv "$tmp" buildScript.json
 elif [[ "$iosFbId" == "true" && "$UPDATE_STRING" == "fbId" || "${updateStrArr[@]}" =~ "fbId" ]]; then
   plutil -replace FacebookAppID -string $FB_APP_ID "ios/$APP_NAME/Info.plist"
+  plutil -replace FacebookClientToken -string $FB_CLIENT_TOKEN "ios/$APP_NAME/Info.plist"
   sed -i '' 's/\(fb[0-9]*\)/'"$FB_URL_SCHEME"'/' "ios/$APP_NAME/Info.plist"
-  echo -e "${GREEN}Facebook App Id is updated${NC}"
+  echo -e "${GREEN}Facebook App Id and Client Token are updated${NC}"
 else
   echo -e "${GREEN}Facebook App Id is already configured!${NC}"
 fi
