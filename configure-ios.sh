@@ -74,7 +74,7 @@ while [ "$1" != "" ]; do
   VALUE=$(echo $1 | awk -F= '{print $2}')
   case $PARAM in
   --app-name)
-    APP_NAME=$VALUE
+    APP_NAME="$VALUE"
     ;;
   --package-name)
     PACKAGE_NAME=$VALUE
@@ -232,15 +232,15 @@ echo -e "${BLUE}==> Setting Facebook App ID...${NC}"
 iosFbId=$(jq -r '.iosFbId' buildScript.json)
 FB_URL_SCHEME="fb$FB_APP_ID"
 if [ "$iosFbId" == "false" ]; then
-  plutil -replace FacebookAppID -string $FB_APP_ID "ios/$APP_NAME/Info.plist"
-  plutil -replace FacebookClientToken -string $FB_CLIENT_TOKEN "ios/$APP_NAME/Info.plist"
-  sed -i '' 's/\(fb[0-9]*\)/'"$FB_URL_SCHEME"'/' "ios/$APP_NAME/Info.plist"
+  plutil -replace FacebookAppID -string $FB_APP_ID "ios/"$APP_NAME"/Info.plist"
+  plutil -replace FacebookClientToken -string $FB_CLIENT_TOKEN "ios/"$APP_NAME"/Info.plist"
+  sed -i '' 's/\(fb[0-9]*\)/'"$FB_URL_SCHEME"'/' "ios/"$APP_NAME"/Info.plist"
   echo -e "${GREEN}Done!${NC}"
   jq '.iosFbId=true' buildScript.json >"$tmp" && mv "$tmp" buildScript.json
 elif [[ "$iosFbId" == "true" && "$UPDATE_STRING" == "fbId" || "${updateStrArr[@]}" =~ "fbId" ]]; then
-  plutil -replace FacebookAppID -string $FB_APP_ID "ios/$APP_NAME/Info.plist"
-  plutil -replace FacebookClientToken -string $FB_CLIENT_TOKEN "ios/$APP_NAME/Info.plist"
-  sed -i '' 's/\(fb[0-9]*\)/'"$FB_URL_SCHEME"'/' "ios/$APP_NAME/Info.plist"
+  plutil -replace FacebookAppID -string $FB_APP_ID "ios/"$APP_NAME"/Info.plist"
+  plutil -replace FacebookClientToken -string $FB_CLIENT_TOKEN "ios/"$APP_NAME"/Info.plist"
+  sed -i '' 's/\(fb[0-9]*\)/'"$FB_URL_SCHEME"'/' "ios/"$APP_NAME"/Info.plist"
   echo -e "${GREEN}Facebook App Id and Client Token are updated${NC}"
 else
   echo -e "${GREEN}Facebook App Id is already configured!${NC}"
@@ -275,7 +275,7 @@ else
 fi
 
 # remove space from $APP_NAME if exists
-if [[ $APP_NAME = *[[:space:]]* ]]; then
+if [[ "$APP_NAME" = *[[:space:]]* ]]; then
   APP_NAME=$(echo "$APP_NAME" | sed 's/[[:space:]]//g')
 fi
 
@@ -284,7 +284,7 @@ echo -e "${BLUE}==> Generating icon set...${NC}"
 if [[ -f "$IC_LAUNCHER" ]]; then
   iosIcon=$(jq -r '.iosIcon' buildScript.json)
   if [[ "$iosIcon" == "false" ]]; then
-    find "./ios/$APP_NAME/Images.xcassets" -type f -name 'launch-icon-*' | while read -r icon; do
+    find "./ios/"$APP_NAME"/Images.xcassets" -type f -name 'launch-icon-*' | while read -r icon; do
       size=$(convert "$icon" -print '%wx%h^' /dev/null)
       cp "$IC_LAUNCHER" "$icon" && convert "$icon" -resize "$size" -background none -gravity center -extent "$size" "$icon"
       echo -e "\t$icon"
@@ -292,7 +292,7 @@ if [[ -f "$IC_LAUNCHER" ]]; then
     jq '.iosIcon=true' buildScript.json >"$tmp" && mv "$tmp" buildScript.json
     echo -e "${GREEN}Done!${NC}"
   elif [[ "$iosIcon" == "true" && "$UPDATE_STRING" == "iconSet" || "${updateStrArr[@]}" =~ "iconSet" ]]; then
-    find "./ios/$APP_NAME/Images.xcassets" -type f -name 'launch-icon-*' | while read -r icon; do
+    find "./ios/"$APP_NAME"/Images.xcassets" -type f -name 'launch-icon-*' | while read -r icon; do
       size=$(convert "$icon" -print '%wx%h^' /dev/null)
       cp "$IC_LAUNCHER" "$icon" && convert "$icon" -resize "$size" -background none -gravity center -extent "$size" "$icon"
       echo -e "\t$icon"
@@ -312,7 +312,7 @@ echo -e "${BLUE}==> Generating splash image set...${NC}"
 if [[ -f "$SPLASH_IMAGE" ]]; then
   iosSplash=$(jq -r '.iosSplash' buildScript.json)
   if [[ "$iosSplash" == "false" ]]; then
-    find "./ios/$APP_NAME/Images.xcassets" -type f -name 'Default-*' | while read -r splash; do
+    find "./ios/"$APP_NAME"/Images.xcassets" -type f -name 'Default-*' | while read -r splash; do
       size=$(convert "$splash" -print '%wx%h^' /dev/null)
       cp "$SPLASH_IMAGE" "$splash" && convert "$splash" -resize "$size" -background none -gravity center -extent "$size" "$splash"
       echo -e "\t$splash"
@@ -320,7 +320,7 @@ if [[ -f "$SPLASH_IMAGE" ]]; then
     jq '.iosSplash=true' buildScript.json >"$tmp" && mv "$tmp" buildScript.json
     echo -e "${GREEN}Done!${NC}"
   elif [[ "$iosSplash" == "true" && "$UPDATE_STRING" == "splashSet" || "${updateStrArr[@]}" =~ "splashSet" ]]; then
-    find "./ios/$APP_NAME/Images.xcassets" -type f -name 'Default-*' | while read -r splash; do
+    find "./ios/"$APP_NAME"/Images.xcassets" -type f -name 'Default-*' | while read -r splash; do
       size=$(convert "$splash" -print '%wx%h^' /dev/null)
       cp "$SPLASH_IMAGE" "$splash" && convert "$splash" -resize "$size" -background none -gravity center -extent "$size" "$splash"
       echo -e "\t$splash"
@@ -338,4 +338,4 @@ fi
 echo -e "${BLUE}==> Installing dependencies...${NC}"
 yarn install
 
-echo -e "${GREEN}\n$APP_NAME iOS is sucessfully configured and is ready to be built!!${NC}"
+echo -e "${GREEN}\n"$APP_NAME" iOS is sucessfully configured and is ready to be built!!${NC}"
