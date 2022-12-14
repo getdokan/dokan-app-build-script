@@ -80,7 +80,7 @@ while [ "$1" != "" ]; do
   VALUE=$(echo $1 | awk -F= '{print $2}')
   case $PARAM in
   --app-name)
-    APP_NAME=$VALUE
+    APP_NAME="$VALUE"
     ;;
   --package-name)
     PACKAGE_NAME=$VALUE
@@ -350,4 +350,4 @@ fi
 echo -e "${BLUE}==> Installing dependencies...${NC}"
 yarn install
 
-echo -e "${GREEN}\n$APP_NAME Android is sucessfully configured and is ready to be built!!${NC}"
+echo -e "${GREEN}\n"$APP_NAME" Android is sucessfully configured and is ready to be built!!${NC}"
