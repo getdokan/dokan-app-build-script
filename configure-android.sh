@@ -241,11 +241,11 @@ fi
 echo -e "${BLUE}==> Setting Google Maps API key...${NC}"
 androidGeoKey=$(jq -r '.androidGeoKey' buildScript.json)
 if [[ "$androidGeoKey" == "false" ]]; then
-  xmlstarlet ed --inplace -O -u "/resources/string[@name='google_api_key']" -v "$GOOGLE_GEO_KEY" "$ANDROID_STRINGS"
+  xmlstarlet ed --inplace -O -u "/resources/string[@name='google_map_api_key']" -v "$GOOGLE_GEO_KEY" "$ANDROID_STRINGS"
   jq '.androidGeoKey=true' buildScript.json >"$tmp" && mv "$tmp" buildScript.json
   echo -e "${GREEN}Done!${NC}"
 elif [[ "$androidGeoKey" == "true" && "$UPDATE_STRING" == "geoKey" || "${updateStrArr[@]}" =~ "geoKey" ]]; then
-  xmlstarlet ed --inplace -O -u "/resources/string[@name='google_api_key']" -v "$GOOGLE_GEO_KEY" "$ANDROID_STRINGS"
+  xmlstarlet ed --inplace -O -u "/resources/string[@name='google_map_api_key']" -v "$GOOGLE_GEO_KEY" "$ANDROID_STRINGS"
   jq '.androidGeoKey=true' buildScript.json >"$tmp" && mv "$tmp" buildScript.json
   echo -e "${GREEN}Google Map API key is updated!${NC}"
 else
