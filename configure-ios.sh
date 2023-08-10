@@ -15,7 +15,7 @@ WC_KEY=
 WC_SECRET=
 FB_APP_ID=
 FB_CLIENT_TOKEN=
-STRIPE_PK=
+# STRIPE_PK=
 ONE_SIGNAL_ID=
 IC_LAUNCHER=
 SPLASH_IMAGE=
@@ -94,9 +94,9 @@ while [ "$1" != "" ]; do
   --fb-client-token)
     FB_CLIENT_TOKEN=$VALUE
     ;;
-  --stripe-pk)
-    STRIPE_PK=" '$VALUE',"
-    ;;
+  # --stripe-pk)
+  #   STRIPE_PK=" '$VALUE',"
+  #   ;;
   --one-signal-id)
     ONE_SIGNAL_ID=" '$VALUE',"
     ;;
@@ -140,9 +140,9 @@ elif [[ "$FB_APP_ID" == "" && "$UPDATE_STRING" == "" ]]; then
 elif [[ "$FB_CLIENT_TOKEN" == "" && "$UPDATE_STRING" == "" ]]; then
   echo -e "\n${RED}ERROR: ${NC}[--fb-client-token] is required\n"
   exit 1
-elif [[ "$STRIPE_PK" == "" && "$UPDATE_STRING" == "" ]]; then
-  echo -e "\n${RED}ERROR: ${NC}[--stripe-pk] is required\n"
-  exit 1
+# elif [[ "$STRIPE_PK" == "" && "$UPDATE_STRING" == "" ]]; then
+#   echo -e "\n${RED}ERROR: ${NC}[--stripe-pk] is required\n"
+#   exit 1
 elif [[ "$ONE_SIGNAL_ID" == "" && "$UPDATE_STRING" == "" ]]; then
   echo -e "\n${RED}ERROR: ${NC}[--one-signal-id] is required\n"
   exit 1
@@ -247,18 +247,18 @@ else
 fi
 
 # Replace Stripe Publishable_key
-echo -e "${BLUE}==> Setting Stripe Publishable Key...${NC}"
-stripePk=$(jq -r '.stripePk' buildScript.json)
-if [[ "$stripePk" == "false" ]]; then
-  sed -i '' 's/\(publishableKey:\)\(.*\)/\1'"$STRIPE_PK"'/' "$CONFIG_FILE"
-  echo -e "${GREEN}Done!${NC}"
-  jq '.stripePk=true' buildScript.json >"$tmp" && mv "$tmp" buildScript.json
-elif [[ "$stripePk" == "true" && "$UPDATE_STRING" == "stripePk" || "${updateStrArr[@]}" =~ "stripePk" ]]; then
-  sed -i '' 's/\(publishableKey:\)\(.*\)/\1'"$STRIPE_PK"'/' "$CONFIG_FILE"
-  echo -e "${GREEN}Stripe Publishable Key is updated!${NC}"
-else
-  echo -e "${GREEN}Stripe Publishable Key is already configured!${NC}"
-fi
+# echo -e "${BLUE}==> Setting Stripe Publishable Key...${NC}"
+# stripePk=$(jq -r '.stripePk' buildScript.json)
+# if [[ "$stripePk" == "false" ]]; then
+#   sed -i '' 's/\(publishableKey:\)\(.*\)/\1'"$STRIPE_PK"'/' "$CONFIG_FILE"
+#   echo -e "${GREEN}Done!${NC}"
+#   jq '.stripePk=true' buildScript.json >"$tmp" && mv "$tmp" buildScript.json
+# elif [[ "$stripePk" == "true" && "$UPDATE_STRING" == "stripePk" || "${updateStrArr[@]}" =~ "stripePk" ]]; then
+#   sed -i '' 's/\(publishableKey:\)\(.*\)/\1'"$STRIPE_PK"'/' "$CONFIG_FILE"
+#   echo -e "${GREEN}Stripe Publishable Key is updated!${NC}"
+# else
+#   echo -e "${GREEN}Stripe Publishable Key is already configured!${NC}"
+# fi
 
 # Replace OneSignal App ID
 echo -e "${BLUE}==> Setting OnseSignal App ID...${NC}"
