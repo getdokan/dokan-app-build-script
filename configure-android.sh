@@ -8,6 +8,7 @@ NC='\033[0m'
 
 # Vars
 ANDROID_STRINGS="./android/app/src/main/res/values/strings.xml"
+ANDROID_SPLASH_BACKGROUND_COLOR="./android/app/src/main/res/values/colors.xml"
 ANDROID_MANIFEST="./android/app/src/main/AndroidManifest.xml"
 CONFIG_FILE="./src/common/Config.js"
 APP_NAME=
@@ -22,6 +23,7 @@ GOOGLE_GEO_KEY=
 ONE_SIGNAL_ID=
 IC_LAUNCHER=
 SPLASH_IMAGE=
+SPLASH_BACKGROUND=
 UPDATE_STRING=
 tmp=$(mktemp) # to hold values of buildScript.json changed by jq temporarily, before writing to actual file
 
@@ -65,8 +67,11 @@ function usage() {
   echo -e "  [--splash-image=<path>]${GREEN}(required)${NC}"
   echo -e "\tPath to splash image /path/to/splash.png\n"
 
+  echo -e "  [--splash-background=<hexadecimal color (#FFFFFF)>]${GREEN}(required)${NC}"
+  echo -e "\tSplash screen background color\n"
+
   echo -e "  [--update=<update-key>]${GREEN}(optional)${NC}"
-  echo -e "\tSingle or comma separated update keys. Available keys are \"siteUrl\", \"wcKeys\", \"fbId\", \"geoKey\", \"stripePk\", \"oneSingalId\", \"iconSet\", \"splashSet\"\n"
+  echo -e "\tSingle or comma separated update keys. Available keys are \"siteUrl\", \"wcKeys\", \"fbId\", \"geoKey\", \"stripePk\", \"oneSingalId\", \"iconSet\",\"splashBackground\" \"splashSet\"\n"
 }
 
 # Execute with no args
@@ -114,6 +119,9 @@ while [ "$1" != "" ]; do
     ;;
   --splash-image)
     SPLASH_IMAGE=$VALUE
+    ;;
+  --splash-background)
+    SPLASH_BACKGROUND=$VALUE
     ;;
   --update)
     UPDATE_STRING=$VALUE
@@ -163,6 +171,9 @@ elif [[ "$IC_LAUNCHER" == "" && "$UPDATE_STRING" == "" ]]; then
   exit 1
 elif [[ "$SPLASH_IMAGE" == "" && "$UPDATE_STRING" == "" ]]; then
   echo -e "\n${RED}ERROR: ${NC}[--splash-image] is required\n"
+  exit 1
+elif [[ "$SPLASH_BACKGROUND" == "" && "$UPDATE_STRING" == "" ]]; then
+  echo -e "\n${RED}ERROR: ${NC}[--splash-background] is required\n"
   exit 1
 fi
 
@@ -218,7 +229,7 @@ else
 fi
 
 # Replace facebook-app-id
-echo -e "${BLUE}==> Setting Facebook App ID...${NC}"
+echo -e "${BLUE}==> Setting Facebook App ID and client token...${NC}"
 androidFbId=$(jq -r '.androidFbId' buildScript.json)
 if [[ "$androidFbId" == "false" ]]; then
   xmlstarlet ed --inplace -O -u "/resources/string[@name='facebook_app_id']" -v "$FB_APP_ID" "$ANDROID_STRINGS"
@@ -232,9 +243,9 @@ elif [[ "$androidFbId" == "true" && "$UPDATE_STRING" == "fbId" || "${updateStrAr
   xmlstarlet ed --inplace -O -u "/resources/string[@name='facebook_client_token']" -v "$FB_CLIENT_TOKEN" "$ANDROID_STRINGS"
   xmlstarlet ed --inplace -O -u "/resources/string[@name='fb_login_protocol_scheme']" -v "fb$FB_APP_ID" "$ANDROID_STRINGS"
   xmlstarlet ed --inplace -O -u "/manifest/application/provider[@android:authorities]/@android:authorities" -v "com.facebook.app.FacebookContentProvider$FB_APP_ID" "$ANDROID_MANIFEST"
-  echo -e "${GREEN}Facebook App Id is updated${NC}"
+  echo -e "${GREEN}Facebook App Id and client token is updated${NC}"
 else
-  echo -e "${GREEN}Facebook App Id is already configured!${NC}"
+  echo -e "${GREEN}Facebook App Id and client token is already configured!${NC}"
 fi
 
 # Replace google-geo-key
@@ -250,6 +261,21 @@ elif [[ "$androidGeoKey" == "true" && "$UPDATE_STRING" == "geoKey" || "${updateS
   echo -e "${GREEN}Google Map API key is updated!${NC}"
 else
   echo -e "${GREEN}Google map API key is already configured!${NC}"
+fi
+
+# Replace splash screen background color
+echo -e "${BLUE}==> Changing splash screen background color...${NC}"
+splashScreenBackgroundColor=$(jq -r '.splashScreenBackgroundColor' buildScript.json)
+if [[ "$splashScreenBackgroundColor" == "false" ]]; then
+  xmlstarlet ed --inplace -O -u "/resources/item[@name='splashBackground']" -v "$SPLASH_BACKGROUND" "$ANDROID_SPLASH_BACKGROUND_COLOR"
+  jq '.splashScreenBackgroundColor=true' buildScript.json >"$tmp" && mv "$tmp" buildScript.json
+  echo -e "${GREEN}Done!${NC}"
+elif [[ "$splashScreenBackgroundColor" == "true" && "$UPDATE_STRING" == "splashBackground" || "${updateStrArr[@]}" =~ "splashBackground" ]]; then
+  xmlstarlet ed --inplace -O -u "/resources/item[@name='splashBackground']" -v "$SPLASH_BACKGROUND" "$ANDROID_SPLASH_BACKGROUND_COLOR"
+  jq '.splashScreenBackgroundColor=true' buildScript.json >"$tmp" && mv "$tmp" buildScript.json
+  echo -e "${GREEN}Splash Background Color is updated!${NC}"
+else
+  echo -e "${GREEN}Splash Background Color is already configured!${NC}"
 fi
 
 # Replace Stripe Publishable_key
