@@ -353,7 +353,6 @@ if [[ -f $SPLASH_IMAGE ]]; then
       size=$(convert "$splash" -print '%wx%h^' /dev/null)
       cp "$SPLASH_IMAGE" "$splash" && convert "$splash" -resize "$size" -background none -gravity center -extent "$size" "$splash"
       # cp "$SPLASH_IMAGE" "$splash" && convert "$splash" -background none -gravity center -extent "$size" "$splash"
-
       echo -e "\t$splash"
     done
     jq '.androidSplash=true' buildScript.json >"$tmp" && mv "$tmp" buildScript.json
