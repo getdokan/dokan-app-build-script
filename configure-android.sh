@@ -351,8 +351,8 @@ if [[ -f $SPLASH_IMAGE ]]; then
   if [[ "$androidSplash" == "false" ]]; then
     find ./android/app/src -type f -name 'launch_screen.*' | while read -r splash; do
       size=$(convert "$splash" -print '%wx%h^' /dev/null)
-      # cp "$SPLASH_IMAGE" "$splash" && convert "$splash" -resize "$size" -background none -gravity center -extent "$size" "$splash"
-      cp "$SPLASH_IMAGE" "$splash" && convert "$splash" -background none -gravity center -extent "$size" "$splash"
+      cp "$SPLASH_IMAGE" "$splash" && convert "$splash" -resize "$size" -background none -gravity center -extent "$size" "$splash"
+      # cp "$SPLASH_IMAGE" "$splash" && convert "$splash" -background none -gravity center -extent "$size" "$splash"
 
       echo -e "\t$splash"
     done
@@ -361,8 +361,8 @@ if [[ -f $SPLASH_IMAGE ]]; then
   elif [[ "$androidSplash" == "false" && "$UPDATE_STRING" == "splashSet" || "${updateStrArr[@]}" =~ "splashSet" ]]; then
     find ./android/app/src -type f -name 'launch_screen.*' | while read -r splash; do
       size=$(convert "$splash" -print '%wx%h^' /dev/null)
-      # cp "$SPLASH_IMAGE" "$splash" && convert "$splash" -resize "$size" -background none -gravity center -extent "$size" "$splash"
-      cp "$SPLASH_IMAGE" "$splash" && convert "$splash" -background none -gravity center -extent "$size" "$splash"
+      cp "$SPLASH_IMAGE" "$splash" && convert "$splash" -resize "$size" -background none -gravity center -extent "$size" "$splash"
+      # cp "$SPLASH_IMAGE" "$splash" && convert "$splash" -background none -gravity center -extent "$size" "$splash"
       echo -e "\t$splash"
     done
     echo -e "${GREEN}Splash image set is updated!${NC}"
