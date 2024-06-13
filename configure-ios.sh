@@ -312,7 +312,7 @@ echo -e "${BLUE}==> Generating splash image set...${NC}"
 if [[ -f "$SPLASH_IMAGE" ]]; then
   iosSplash=$(jq -r '.iosSplash' buildScript.json)
   if [[ "$iosSplash" == "false" ]]; then
-    find "./ios/"$APP_NAME"/Images.xcassets" -type f -name 'Default-*' | while read -r splash; do
+    find "./ios/"$APP_NAME"/Images.xcassets" -type f -name 'LaunchImage-*' | while read -r splash; do
       size=$(convert "$splash" -print '%wx%h^' /dev/null)
       cp "$SPLASH_IMAGE" "$splash" && convert "$splash" -resize "$size" -background none -gravity center -extent "$size" "$splash"
       echo -e "\t$splash"
@@ -320,7 +320,7 @@ if [[ -f "$SPLASH_IMAGE" ]]; then
     jq '.iosSplash=true' buildScript.json >"$tmp" && mv "$tmp" buildScript.json
     echo -e "${GREEN}Done!${NC}"
   elif [[ "$iosSplash" == "true" && "$UPDATE_STRING" == "splashSet" || "${updateStrArr[@]}" =~ "splashSet" ]]; then
-    find "./ios/"$APP_NAME"/Images.xcassets" -type f -name 'Default-*' | while read -r splash; do
+    find "./ios/"$APP_NAME"/Images.xcassets" -type f -name 'LaunchImage-*' | while read -r splash; do
       size=$(convert "$splash" -print '%wx%h^' /dev/null)
       cp "$SPLASH_IMAGE" "$splash" && convert "$splash" -resize "$size" -background none -gravity center -extent "$size" "$splash"
       echo -e "\t$splash"
