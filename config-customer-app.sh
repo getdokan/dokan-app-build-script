@@ -121,6 +121,15 @@ else
   exit 1
 fi
 
+echo "Updating splash screen background color in lib/env.dart..."
+if [[ -f "$ENV_DART_FILE" ]]; then
+  sed -i.bak "s|\"backgroundColor\": \".*\"|\"backgroundColor\": \"$SPLASH_BG_COLOR\"|" "$ENV_DART_FILE"
+  rm -f "$ENV_DART_FILE.bak"  # Remove backup file created by sed
+else
+  echo "Error: $ENV_DART_FILE not found."
+  exit 1
+fi
+
 # Update app configuration
 echo "Updating app configuration..."
 SED_CMD="sed -i"
