@@ -17,19 +17,19 @@ else
 fi
 
 
-# # Install "update-dokan-app-scripts"
-# if [[ ! -f /usr/local/bin/update-dokan-app-scripts ]]; then
-#   wget -qO /usr/local/bin/update-dokan-app-scripts https://raw.githubusercontent.com/weDevsOfficial/dokan-app-build-script/dokan_cloud_customer/update-build-scripts.sh
-#   # Executable permission
-#   chmod a+x /usr/local/bin/update-dokan-app-scripts
-# fi
+# Install "update-dokan-customer-app-scripts"
+if [[ ! -f /usr/local/bin/update-dokan-customer-app-scripts ]]; then
+  wget -qO /usr/local/bin/update-dokan-customer-app-scripts https://raw.githubusercontent.com/weDevsOfficial/dokan-app-build-script/dokan_cloud_customer/update-script.sh
+  # Executable permission
+  chmod a+x /usr/local/bin/update-dokan-customer-app-scripts
+fi
 
-# # Install "uninstall-dokan-app-scripts"
-# if [[ ! -f /usr/local/bin/uninstall-dokan-app-scripts ]]; then
-#   wget -qO /usr/local/bin/uninstall-dokan-app-scripts https://raw.githubusercontent.com/weDevsOfficial/dokan-app-build-script/dokan_cloud_customer/uninstall-build-scripts.sh
-#   # Executable permission
-#   chmod a+x /usr/local/bin/uninstall-dokan-app-scripts
-# fi
+# Install "uninstall-dokan-customer-app-scripts"
+if [[ ! -f /usr/local/bin/uninstall-dokan-customer-app-scripts ]]; then
+  wget -qO /usr/local/bin/uninstall-dokan-customer-app-scripts https://raw.githubusercontent.com/weDevsOfficial/dokan-app-build-script/dokan_cloud_customer/uninstall-build-scripts.sh
+  # Executable permission
+  chmod a+x /usr/local/bin/uninstall-dokan-customer-app-scripts
+fi
 
 echo "**************************"
 echo "* Finished Installation! *"
