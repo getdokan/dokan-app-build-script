@@ -1,5 +1,12 @@
 #!/bin/bash
 
+# Colors
+RED='\033[31m'
+GREEN='\033[1;32m'
+BLUE='\033[0;34m'
+NC='\033[0m'
+
+
 set -e  # Exit immediately if a command exits with a non-zero status.
 
 # Parse arguments
@@ -49,10 +56,23 @@ while [[ "$#" -gt 0 ]]; do
 done
 
 # Validate arguments
-if [[ -z "$APP_NAME" || -z "$VERSION" || -z "$PACKAGE_NAME" || -z "$SITE_URL" || 
-      -z "$LAUNCHER_ICON" || -z "$SPLASH_IMAGE" || -z "$SPLASH_BG_COLOR" ||
-      -z "$GOOGLE_SERVICES_JSON" ]]; then
-  echo "Missing required arguments."
+MISSING_ARGS=()
+
+[[ -z "$APP_NAME" ]] && MISSING_ARGS+=("App Name")
+[[ -z "$VERSION" ]] && MISSING_ARGS+=("Version")
+[[ -z "$PACKAGE_NAME" ]] && MISSING_ARGS+=("Package Name")
+[[ -z "$SITE_URL" ]] && MISSING_ARGS+=("Site URL")
+[[ -z "$LAUNCHER_ICON" ]] && MISSING_ARGS+=("Launcher Icon")
+[[ -z "$SPLASH_IMAGE" ]] && MISSING_ARGS+=("Splash Image")
+[[ -z "$SPLASH_BG_COLOR" ]] && MISSING_ARGS+=("Splash Background Color")
+[[ -z "$GOOGLE_SERVICES_JSON" ]] && MISSING_ARGS+=("Google Services JSON")
+
+if [[ ${#MISSING_ARGS[@]} -ne 0 ]]; then
+  echo -e "${RED}The following required arguments are missing:${NC}"
+  for ARG in "${MISSING_ARGS[@]}"; do
+    echo -e "- $ARG${NC}"
+  done
+  echo -e "${BLUE}Please provide them and try again.${NC}"
   exit 1
 fi
 
@@ -73,7 +93,7 @@ cd "$TEMP_DIR"
 
 
 
-echo "Updating app name, package name, and iOS bundle ID in configs/env.properties..."
+echo "${GREEN}Updating app name, package name, and iOS bundle ID in configs/env.properties..."
 ENV_FILE="configs/env.properties"
 if [[ -f "$ENV_FILE" ]]; then
   sed -i.bak "s/^appName=.*/appName=$APP_NAME/" "$ENV_FILE" || echo "appName=$APP_NAME" >> "$ENV_FILE"
