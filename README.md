@@ -54,7 +54,7 @@ chmod +x build-customer-app.sh
 Run the script with the following options:
 
 ```bash
-config-customer-app.sh \
+config-customer-app \
 --app-name="<Your App Name>" \
 --version="<App Version>" \
 --package-name="<Package Name>" \

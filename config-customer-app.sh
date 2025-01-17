@@ -77,7 +77,7 @@ if [[ ${#MISSING_ARGS[@]} -ne 0 ]]; then
 fi
 
 # Variables
-REPO_URL="https://github.com/getdokan/mobile-app-customer"  # Replace with your repository URL
+REPO_URL="git@github.com:getdokan/mobile-app-customer.git"  # Replace with your repository URL
 OUTPUT_DIR="$(pwd)/output_file"  # Absolute path for output directory
 TEMP_DIR="$APP_NAME"
 BRANCH_NAME="diff_splash"
