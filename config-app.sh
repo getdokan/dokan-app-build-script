@@ -38,7 +38,7 @@ clone_repository() {
     # Variables
     REPO_URL="git@github.com:getdokan/mobile-app-customer.git"  # Replace with your repository URL 
     OUTPUT_DIR="$(pwd)/output_file" # Absolute path for output directory
-    TEMP_DIR="$APP_NAME"
+    TEMP_DIR="DokanCustomerApp"
     BRANCH_NAME="fast_lane_integration"
 
     # Clean up previous clones
@@ -69,9 +69,9 @@ parse_args() {
             --splash-bg-color=*) SPLASH_BG_COLOR="${1#*=}" ;;
             --google-services-json=*) GOOGLE_SERVICES_JSON="${1#*=}" ;;
             --google-cloud-service-key-json=*) GOOGLE_CLOUD_SERVICE_KEY_JSON="${1#*=}" ;;
-            --apple-application-specific-password=*) APPLE_APPLICATION_SPECIFIC_PASSWORD="${1#*=}" ;;
-            --apple-id=*) APPLE_ID="${1#*=}" ;;
-            --apple-team-name=*) APPLE_TEAM_NAME="${1#*=}" ;;
+            --app-store-connect-api-key-p8=*) APP_STORE_CONNECT_API_KEY_P8="${1#*=}" ;;
+            --app-store-connect-api-key-id=*) APP_STORE_CONNECT_API_KEY_KEY_ID="${1#*=}" ;;
+            --app-store-connect-api-key-issuer-id=*) APP_STORE_CONNECT_API_KEY_ISSUER_ID="${1#*=}" ;;
             *) 
                 echo "Unknown argument: $1"
                 exit 1 
@@ -136,15 +136,36 @@ update_app_config() {
 # Replace configuration files
 replace_config_files() {
     echo "Updating files..."
+
     cp "$GOOGLE_SERVICES_JSON" configs/google-services.json
     cp "$LAUNCHER_ICON" configs/app_icon/app_icon.png
     cp "$SPLASH_IMAGE" configs/app_icon/app_splash.png
     cp "$GOOGLE_CLOUD_SERVICE_KEY_JSON" configs/google-cloud-service-key.json
+    cp "$APP_STORE_CONNECT_API_KEY_P8" configs/app-store-connect-api-key.p8
+}
+
+# Generate keystore file
+generate_keystore() {
+    echo "Generating keystore..."
+    local KEYSTORE_FILE="configs/keystore.jks"
+    local KEYSTORE_PROPS_FILE="configs/keystore.properties"
+    
+    # Ensure files exist
+    [[ ! -f "$KEYSTORE_FILE" ]] && { echo "Error: $KEYSTORE_FILE not found."; exit 1; }
+    [[ ! -f "$KEYSTORE_PROPS_FILE" ]] && { echo "Error: $KEYSTORE_PROPS_FILE not found."; exit 1; }
+    
+    # Extract keystore properties
+    KEYSTORE_ALIAS=$(grep "^keystoreAlias=" "$KEYSTORE_PROPS_FILE" | cut -d'=' -f2)
+    KEYSTORE_PASSWORD=$(grep "^keystorePassword=" "$KEYSTORE_PROPS_FILE" | cut -d'=' -f2)
+    KEY_PASSWORD=$(grep "^keyPassword=" "$KEYSTORE_PROPS_FILE" | cut -d'=' -f2)
+    
+    # Generate keystore
+    keytool -genkey -v -keystore "$KEYSTORE_FILE" -alias "$KEYSTORE_ALIAS" -keyalg RSA -keysize 2048 -validity 10000 -storepass "$KEYSTORE_PASSWORD" -keypass "$KEY_PASSWORD" -dname "CN=Unknown, OU=Unknown, O=Unknown, L=Unknown, S=Unknown, C=Unknown"
 }
 
 update_fastlane_env_file_android() {
     echo "Updating fastlane for android..."
-    # local ENV_FILE="configs/env.properties"
+
     local ENV_FILE="android/fastlane/.env"
     local ENV_PROPS_FILE="configs/env.properties"
     
@@ -152,15 +173,8 @@ update_fastlane_env_file_android() {
     [[ ! -f "$ENV_FILE" ]] && { echo "Error: $ENV_FILE not found."; exit 1; }
     [[ ! -f "$ENV_PROPS_FILE" ]] && { echo "Error: $ENV_PROPS_FILE not found."; exit 1; }
     
-    # # Extract package name from env.properties
-    # PACKAGE_NAME=$(grep "^androidPackageName=" "$ENV_PROPS_FILE" | cut -d'=' -f2)
-    
-    # Get the filename of the Google Cloud Service Key JSON
-    GOOGLE_CLOUD_JSON_FILENAME=$(basename "$GOOGLE_CLOUD_SERVICE_KEY_JSON")
-    
     # Update package name and Google Cloud JSON path
     sed -i.bak "s|^ANDROID_PACKAGE_NAME=.*|ANDROID_PACKAGE_NAME=\"$PACKAGE_NAME\"|" "$ENV_FILE"
-    sed -i.bak "s|^ANDROID_PLAY_JSON_KEY_PATH=.*|ANDROID_PLAY_JSON_KEY_PATH=\"../configs/$GOOGLE_CLOUD_JSON_FILENAME\"|" "$ENV_FILE"
     
     rm -f "$ENV_FILE.bak"
 }
@@ -169,19 +183,13 @@ update_fastlane_env_file_ios() {
     echo "Updating fastlane for ios..."
     # local ENV_FILE="configs/env.properties"
     local ENV_FILE="ios/fastlane/.env"
-    local ENV_PROPS_FILE="configs/env.properties"
     
     # Ensure files exist
     [[ ! -f "$ENV_FILE" ]] && { echo "Error: $ENV_FILE not found."; exit 1; }
-    [[ ! -f "$ENV_PROPS_FILE" ]] && { echo "Error: $ENV_PROPS_FILE not found."; exit 1; }
-    
-    # Extract package name from env.properties
-    PACKAGE_NAME=$(grep "^androidPackageName=" "$ENV_PROPS_FILE" | cut -d'=' -f2)
     
     # Update apples required items for .env
-    sed -i.bak "s|^FASTLANE_APPLE_APPLICATION_SPECIFIC_PASSWORD=.*|FASTLANE_APPLE_APPLICATION_SPECIFIC_PASSWORD=\"$APPLE_APPLICATION_SPECIFIC_PASSWORD\"|" "$ENV_FILE"
-    sed -i.bak "s|^APPLE_ID=.*|APPLE_ID=\"$APPLE_ID\"|" "$ENV_FILE"
-    sed -i.bak "s|^APPLE_TEAM_NAME=.*|APPLE_TEAM_NAME=\"$APPLE_TEAM_NAME\"|" "$ENV_FILE"
+    sed -i.bak "s|^APP_STORE_CONNECT_API_KEY_KEY_ID=.*|APP_STORE_CONNECT_API_KEY_KEY_ID=\"$APP_STORE_CONNECT_API_KEY_KEY_ID\"|" "$ENV_FILE"
+    sed -i.bak "s|^APP_STORE_CONNECT_API_KEY_ISSUER_ID=.*|APP_STORE_CONNECT_API_KEY_ISSUER_ID=\"$APP_STORE_CONNECT_API_KEY_ISSUER_ID\"|" "$ENV_FILE"
     sed -i.bak "s|^APP_IDENTIFIER=.*|APP_IDENTIFIER=\"$PACKAGE_NAME\"|" "$ENV_FILE"
     
     rm -f "$ENV_FILE.bak"
