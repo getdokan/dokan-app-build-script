@@ -20,8 +20,8 @@ validate_args() {
     [[ -z "$LAUNCHER_ICON" ]] && MISSING_ARGS+=("Launcher Icon")
     [[ -z "$SPLASH_IMAGE" ]] && MISSING_ARGS+=("Splash Image")
     [[ -z "$SPLASH_BG_COLOR" ]] && MISSING_ARGS+=("Splash Background Color")
-    [[ -z "$GOOGLE_SERVICES_JSON" ]] && MISSING_ARGS+=("Google Services JSON")
-    [[ -z "$GOOGLE_CLOUD_SERVICE_KEY_JSON" ]] && MISSING_ARGS+=("Google Cloud Service Key JSON")
+    # [[ -z "$GOOGLE_SERVICES_JSON" ]] && MISSING_ARGS+=("Google Services JSON")
+    # [[ -z "$GOOGLE_CLOUD_SERVICE_KEY_JSON" ]] && MISSING_ARGS+=("Google Cloud Service Key JSON")
     # [[ -z "$APPLE_APPLICATION_SPECIFIC_PASSWORD" ]] && MISSING_ARGS+=("Apple Application Specific Password")
 
     if [[ ${#MISSING_ARGS[@]} -ne 0 ]]; then
@@ -50,12 +50,6 @@ clone_repository() {
     cd "$TEMP_DIR"
 }
 
-# Clean up function
-cleanup() {
-    # Remove temporary directory
-    rm -rf "$TEMP_DIR"
-}
-
 # Parse command-line arguments
 parse_args() {
     while [[ "$#" -gt 0 ]]; do
@@ -67,11 +61,6 @@ parse_args() {
             --launcher-icon=*) LAUNCHER_ICON="${1#*=}" ;;
             --splash-image=*) SPLASH_IMAGE="${1#*=}" ;;
             --splash-bg-color=*) SPLASH_BG_COLOR="${1#*=}" ;;
-            --google-services-json=*) GOOGLE_SERVICES_JSON="${1#*=}" ;;
-            --google-cloud-service-key-json=*) GOOGLE_CLOUD_SERVICE_KEY_JSON="${1#*=}" ;;
-            --app-store-connect-api-key-p8=*) APP_STORE_CONNECT_API_KEY_P8="${1#*=}" ;;
-            --app-store-connect-api-key-id=*) APP_STORE_CONNECT_API_KEY_KEY_ID="${1#*=}" ;;
-            --app-store-connect-api-key-issuer-id=*) APP_STORE_CONNECT_API_KEY_ISSUER_ID="${1#*=}" ;;
             *) 
                 echo "Unknown argument: $1"
                 exit 1 
@@ -137,47 +126,28 @@ update_app_config() {
 replace_config_files() {
     echo "Updating files..."
 
-    cp "$GOOGLE_SERVICES_JSON" configs/google-services.json
+    # cp "$GOOGLE_SERVICES_JSON" configs/google-services.json
     cp "$LAUNCHER_ICON" configs/app_icon/app_icon.png
     cp "$SPLASH_IMAGE" configs/app_icon/app_splash.png
-    cp "$GOOGLE_CLOUD_SERVICE_KEY_JSON" configs/google-cloud-service-key.json
-    cp "$APP_STORE_CONNECT_API_KEY_P8" configs/app-store-connect-api-key.p8
+    # cp "$GOOGLE_CLOUD_SERVICE_KEY_JSON" configs/google-cloud-service-key.json
+    # cp "$APP_STORE_CONNECT_API_KEY_P8" configs/app-store-connect-api-key.p8
 }
 
-# Generate keystore file
-generate_keystore() {
-    echo "Generating keystore..."
-    local KEYSTORE_FILE="configs/keystore.jks"
-    local KEYSTORE_PROPS_FILE="configs/keystore.properties"
-    
-    # Ensure files exist
-    [[ ! -f "$KEYSTORE_FILE" ]] && { echo "Error: $KEYSTORE_FILE not found."; exit 1; }
-    [[ ! -f "$KEYSTORE_PROPS_FILE" ]] && { echo "Error: $KEYSTORE_PROPS_FILE not found."; exit 1; }
-    
-    # Extract keystore properties
-    KEYSTORE_ALIAS=$(grep "^keystoreAlias=" "$KEYSTORE_PROPS_FILE" | cut -d'=' -f2)
-    KEYSTORE_PASSWORD=$(grep "^keystorePassword=" "$KEYSTORE_PROPS_FILE" | cut -d'=' -f2)
-    KEY_PASSWORD=$(grep "^keyPassword=" "$KEYSTORE_PROPS_FILE" | cut -d'=' -f2)
-    
-    # Generate keystore
-    keytool -genkey -v -keystore "$KEYSTORE_FILE" -alias "$KEYSTORE_ALIAS" -keyalg RSA -keysize 2048 -validity 10000 -storepass "$KEYSTORE_PASSWORD" -keypass "$KEY_PASSWORD" -dname "CN=Unknown, OU=Unknown, O=Unknown, L=Unknown, S=Unknown, C=Unknown"
-}
+# update_fastlane_env_file_android() {
+#     echo "Updating fastlane for android..."
 
-update_fastlane_env_file_android() {
-    echo "Updating fastlane for android..."
-
-    local ENV_FILE="android/fastlane/.env"
-    local ENV_PROPS_FILE="configs/env.properties"
+#     local ENV_FILE="android/fastlane/.env"
+#     local ENV_PROPS_FILE="configs/env.properties"
     
-    # Ensure files exist
-    [[ ! -f "$ENV_FILE" ]] && { echo "Error: $ENV_FILE not found."; exit 1; }
-    [[ ! -f "$ENV_PROPS_FILE" ]] && { echo "Error: $ENV_PROPS_FILE not found."; exit 1; }
+#     # Ensure files exist
+#     [[ ! -f "$ENV_FILE" ]] && { echo "Error: $ENV_FILE not found."; exit 1; }
+#     [[ ! -f "$ENV_PROPS_FILE" ]] && { echo "Error: $ENV_PROPS_FILE not found."; exit 1; }
     
-    # Update package name and Google Cloud JSON path
-    sed -i.bak "s|^ANDROID_PACKAGE_NAME=.*|ANDROID_PACKAGE_NAME=\"$PACKAGE_NAME\"|" "$ENV_FILE"
+#     # Update package name and Google Cloud JSON path
+#     sed -i.bak "s|^ANDROID_PACKAGE_NAME=.*|ANDROID_PACKAGE_NAME=\"$PACKAGE_NAME\"|" "$ENV_FILE"
     
-    rm -f "$ENV_FILE.bak"
-}
+#     rm -f "$ENV_FILE.bak"
+# }
 
 update_fastlane_env_file_ios() {
     echo "Updating fastlane for ios..."
@@ -195,6 +165,14 @@ update_fastlane_env_file_ios() {
     rm -f "$ENV_FILE.bak"
 }
 
+# Cleanup function
+cleanup() {
+    if [ $? -eq 0 ]; then
+        echo -e "${GREEN}Configuration completed successfully!${NC}"
+    else
+        echo -e "${RED}Configuration failed${NC}"
+    fi
+}
 
 # Main execution
 main() {
@@ -213,13 +191,13 @@ main() {
     update_flutter_env
     update_app_config
     replace_config_files
-    update_fastlane_env_file_android
-    update_fastlane_env_file_ios
+    # update_fastlane_env_file_android
+    # update_fastlane_env_file_ios
     
     # Prepare and clean app
     flutter clean
     flutter pub get
-    cd ios && pod install && cd ..
+    # cd ios && rm -rf Podfile.lock && pod deintegrate && pod install && cd ..
     dart run flutter_launcher_icons -f app_config_options.yaml
     dart run flutter_native_splash:create --path=app_config_options.yaml
     
