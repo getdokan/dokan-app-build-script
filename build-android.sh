@@ -102,7 +102,6 @@ generate_keystore() {
         echo "Warning: $KEYSTORE_FILE not found. generating new keystore..."
         # Generate keystore
         keytool -genkey -v -keystore "$KEYSTORE_FILE" -alias "$KEYSTORE_ALIAS" -keyalg RSA -keysize 2048 -validity 10000 -storepass "$KEYSTORE_PASSWORD" -keypass "$KEY_PASSWORD" -dname "CN=Unknown, OU=Unknown, O=Unknown, L=Unknown, S=Unknown, C=Unknown"
-        # return 1
     fi
 }
 
